@@ -27,7 +27,7 @@ body {
 }
 
 .page {
-  width: min(480px, 100%);
+  width: min(640px, 100%);
   padding: 3.2rem 1.75rem 2.25rem;
   display: flex;
   flex-direction: column;
@@ -70,6 +70,10 @@ body {
   color: #fffdf8;
   box-shadow: 0 14px 32px rgba(176, 122, 92, 0.26);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  width: 100%;
+  min-width: 280px;
+  max-width: 580px;
+  margin: 0 auto;
 }
 
 .link-button:hover,
