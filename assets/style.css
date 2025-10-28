@@ -27,7 +27,7 @@ body {
 }
 
 .page {
-  width: min(640px, 100%);
+  width: min(680px, 100%);
   padding: 3.2rem 1.75rem 2.25rem;
   display: flex;
   flex-direction: column;
@@ -91,11 +91,21 @@ body {
 
 @media (max-width: 480px) {
   .page {
+    width: calc(100% - 2.5rem);
+    margin: 1.25rem auto;
     padding: 2.6rem 1.4rem;
   }
 
   .link-button {
     font-size: 1rem;
     padding: 0.9rem 1rem;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .page {
+    width: 760px;
   }
 }
