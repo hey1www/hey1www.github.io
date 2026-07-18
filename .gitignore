@@ -1,2 +1,9 @@
+node_modules
+dist
+dist-static
+.playwright-cli
+output
 .DS_Store
-vista/
+*.log
+.env
+.env.local

@@ -1,45 +1,26 @@
-<!DOCTYPE html>
-<html lang="zh-HK">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Open Street Arena" />
-    <title>Open Street Arena </title>
-    <link rel="stylesheet" href="./assets/style.css" />
+    <meta name="theme-color" content="#EDEFF2" />
+    <meta
+      name="description"
+      content="Interactive career canvas for WANG Zouheyi, covering AI engineering, LLM integration, robotics, web systems, and data products."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WANG Zouheyi — Interactive Career Canvas" />
+    <meta
+      property="og:description"
+      content="Explore WANG Zouheyi's education, internships, projects, and skills through an interactive multilingual portfolio canvas."
+    />
+    <meta property="og:site_name" content="heyi-portal" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <title>WANG Zouheyi — Interactive Career Canvas</title>
   </head>
   <body>
-    <main class="page">
-      <header class="hero">
-        <h1>Open Street Arena</h1>
-        <p class="subtitle">開放街頭決鬥場</p>
-      </header>
-      <nav class="links">
-        <a class="link-button" href="https://hey1www.github.io/open-street-arena/">
-          前往 Open Street Arena >
-        </a>
-      </nav>
-      <footer class="disclaimer">
-        <p>
-          數據僅供資訊參考，來源見事件詳情連結。
-        </p>
-      </footer>
-    </main>
-
-    <main class="page">
-      <header class="hero">
-        <h1>Vista</h1>
-        <p class="subtitle"> 获取你的地理位置信息</p>
-      </header>
-      <nav class="links">
-        <a class="link-button" href="https://hey1www.github.io/vista/">
-          指明方向 >
-        </a>
-      </nav>
-      <footer class="disclaimer">
-        <p>
-        </p>
-      </footer>
-    </main>
-
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
