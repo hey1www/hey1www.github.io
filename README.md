@@ -7,7 +7,7 @@ Interactive multilingual career canvas for **WANG Zouheyi**. The public viewer i
 - Desktop: canvas + sidebar + minimap with education, internship, and project rows.
 - Mobile: vertical card flow with tabs, skill filtering, language switching, and detail drawer.
 - Capability filters: four stable skill tracks plus individual technology tags.
-- Languages: English, Simplified Chinese, Traditional Chinese.
+- Languages: English, Simplified Chinese, Traditional Chinese, selected automatically from the visitor's browser language on first visit.
 - Data source: `src/data/defaultPortfolio.ts` by default, or `data/portfolio.json` in local editor mode.
 - Export: deployable `dist-static/` directory, plus optional single-file export.
 
@@ -19,6 +19,7 @@ npm run dev             # public viewer dev server
 npm run editor          # local editor: API server + editor-mode Vite
 npm run typecheck
 npm run lint            # currently aliases TypeScript static checking
+npm run test:locale     # device-language matching tests
 npm run build           # production viewer build
 npm run build:viewer
 npm run build:editor
@@ -27,7 +28,11 @@ npm run export:single   # writes dist-static/index.html with JS/CSS/data inlined
 npm run preview
 ```
 
-There is currently no `npm test` script.
+Language selection follows the visitor's ordered browser preferences. `zh-CN`,
+`zh-SG`, and `zh-Hans` use Simplified Chinese; `zh-TW`, `zh-HK`, `zh-MO`, and
+`zh-Hant` use Traditional Chinese; unsupported languages fall back to English.
+A language selected manually with the switcher is stored as the visitor's
+preference and takes priority on later visits.
 
 ## Public Viewer vs Editor Mode
 
@@ -159,6 +164,8 @@ Desktop:
 
 Language:
 
+- Clear `heyi-portal:locale` from local storage and confirm the initial language follows the browser language.
+- Test English, `zh-CN`, and `zh-HK` browser locales.
 - Switch EN / 简 / 繁.
 - Refresh and confirm the choice persists.
 - Confirm `document.documentElement.lang` updates.

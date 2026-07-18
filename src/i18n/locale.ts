@@ -16,45 +16,77 @@ export const LOCALE_HTML_LANG: Record<LocaleCode, string> = {
 
 export const LOCALE_STORAGE_KEY = "heyi-portal:locale";
 
+const TRADITIONAL_CHINESE_REGIONS = new Set(["tw", "hk", "mo"]);
+
+/**
+ * Map a BCP 47 browser language tag to one of the locales supported by the
+ * portal. Returning null lets detectLocale() continue through the visitor's
+ * ordered language preference list when the current tag is unsupported.
+ */
+export function localeFromLanguageTag(rawTag: string): LocaleCode | null {
+  const subtags = rawTag
+    .trim()
+    .replace(/_/g, "-")
+    .toLowerCase()
+    .split("-")
+    .filter(Boolean);
+
+  const [language, ...qualifiers] = subtags;
+  if (language === "en") return "en";
+  if (language !== "zh") return null;
+
+  // An explicit script is more precise than the region when both are present.
+  if (qualifiers.includes("hant")) return "zhHant";
+  if (qualifiers.includes("hans")) return "zhHans";
+
+  if (qualifiers.some((part) => TRADITIONAL_CHINESE_REGIONS.has(part))) {
+    return "zhHant";
+  }
+
+  // Bare zh and other Chinese regions use Simplified Chinese by default.
+  return "zhHans";
+}
+
 /**
  * Resolve the user's preferred locale by inspecting the browser language
- * preferences. Traditional Chinese variants (zh-Hant/TW/HK/MO) take priority
- * over Simplified Chinese; everything else falls back to English.
+ * preferences in order. Unsupported languages are skipped; if none of the
+ * visitor's preferences are supported, the portal falls back to English.
  */
-export function detectLocale(): LocaleCode {
-  if (typeof navigator === "undefined") return "en";
-  const candidates = [navigator.language, ...(navigator.languages || [])]
-    .filter(Boolean)
-    .map((tag) => tag.toLowerCase());
+export function detectLocale(languagePreferences?: readonly string[]): LocaleCode {
+  const candidates = languagePreferences ?? (
+    typeof navigator === "undefined"
+      ? []
+      : [navigator.language, ...(navigator.languages || [])]
+  );
 
-  for (const tag of candidates) {
-    if (
-      tag === "zh-hant" ||
-      tag === "zh-tw" ||
-      tag === "zh-hk" ||
-      tag === "zh-mo"
-    ) {
-      return "zhHant";
-    }
+  for (const tag of new Set(candidates.filter(Boolean))) {
+    const locale = localeFromLanguageTag(tag);
+    if (locale) return locale;
   }
-  for (const tag of candidates) {
-    if (tag.startsWith("zh")) return "zhHans";
-  }
+
   return "en";
 }
 
 export function readStoredLocale(): LocaleCode | null {
   if (typeof localStorage === "undefined") return null;
-  const raw = localStorage.getItem(LOCALE_STORAGE_KEY);
-  if (raw && (SUPPORTED_LOCALES as string[]).includes(raw)) {
-    return raw as LocaleCode;
+  try {
+    const raw = localStorage.getItem(LOCALE_STORAGE_KEY);
+    if (raw && (SUPPORTED_LOCALES as string[]).includes(raw)) {
+      return raw as LocaleCode;
+    }
+  } catch {
+    // Some privacy modes expose localStorage but deny access to it.
   }
   return null;
 }
 
 export function persistLocale(locale: LocaleCode): void {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  try {
+    localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  } catch {
+    // Language switching still works for the current tab without persistence.
+  }
 }
 
 export function pickLocaleText(text: LocaleText | undefined, locale: LocaleCode): string {

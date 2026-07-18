@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   detectLocale,
   persistLocale,
@@ -15,9 +15,17 @@ import type { LocaleCode, LocaleText } from "../types/portfolio";
  * useLocaleContext() so that switching languages re-renders everything.
  */
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<LocaleCode>(() => {
-    return readStoredLocale() ?? detectLocale();
-  });
+  const initialLocale = useRef<{ locale: LocaleCode; followsDevice: boolean } | null>(null);
+  if (!initialLocale.current) {
+    const storedLocale = readStoredLocale();
+    initialLocale.current = {
+      locale: storedLocale ?? detectLocale(),
+      followsDevice: storedLocale === null,
+    };
+  }
+
+  const [locale, setLocaleState] = useState<LocaleCode>(initialLocale.current.locale);
+  const [followsDevice, setFollowsDevice] = useState(initialLocale.current.followsDevice);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -25,7 +33,21 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     }
   }, [locale]);
 
+  useEffect(() => {
+    if (!followsDevice || typeof window === "undefined") return;
+
+    const syncWithDeviceLanguage = () => {
+      setLocaleState(detectLocale());
+    };
+
+    window.addEventListener("languagechange", syncWithDeviceLanguage);
+    return () => {
+      window.removeEventListener("languagechange", syncWithDeviceLanguage);
+    };
+  }, [followsDevice]);
+
   const setLocale = useCallback((next: LocaleCode) => {
+    setFollowsDevice(false);
     setLocaleState(next);
     persistLocale(next);
   }, []);

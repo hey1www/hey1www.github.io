@@ -15,7 +15,8 @@
     "export:single": "tsx server/export-static.ts --single",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:locale": "tsx --test src/i18n/locale.test.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
