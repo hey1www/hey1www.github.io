@@ -184,6 +184,25 @@ function StructuredSection({ section }: { section: DetailSection }) {
           ))}
         </div>
       ) : null}
+      {section.groups?.length ? (
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {section.groups.map((group) => (
+            <section key={group.id} className="rounded-md border border-border-soft bg-bg-outer/55 p-3">
+              <h4 className="font-title font-title-strong text-[15px] leading-snug text-navy">
+                {t(group.title)}
+              </h4>
+              <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-text-main/85">
+                {group.items.map((item, index) => (
+                  <li key={index} className="flex gap-2">
+                    <span aria-hidden className="mt-2 h-1 w-1 flex-none rounded-full bg-navy/70" />
+                    <span>{t(item)}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ) : null}
       {section.media?.map((media, index) => (
         <figure key={`${media.src}-${index}`} className="mt-4 overflow-hidden rounded-md border border-border-soft bg-bg-outer">
           <img src={media.src} alt={t(media.alt)} className="block h-auto w-full" loading="lazy" />

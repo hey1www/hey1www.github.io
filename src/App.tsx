@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Card, CardGroup, Portfolio, SkillFilter } from "./types/portfolio";
 import { loadPortfolio } from "./data/portfolio";
-import { useCanvasTransform } from "./hooks/useCanvasTransform";
+import { CANVAS_LIMITS, useCanvasTransform } from "./hooks/useCanvasTransform";
 import { useCardRegistry, type CardSizeMap } from "./hooks/useCardRegistry";
 import { useSkillHighlight } from "./hooks/useSkillHighlight";
 import { useResponsiveMode } from "./hooks/useResponsiveMode";
@@ -137,6 +137,26 @@ function App() {
     [focusOnPoint, viewport.height, viewport.scale, viewport.width]
   );
 
+  const handleZoomIn = useCallback(() => {
+    transform.zoomAt(
+      { x: viewport.width / 2, y: viewport.height / 2 },
+      1 + CANVAS_LIMITS.ZOOM_STEP,
+      "smooth"
+    );
+  }, [transform, viewport.height, viewport.width]);
+
+  const handleZoomOut = useCallback(() => {
+    transform.zoomAt(
+      { x: viewport.width / 2, y: viewport.height / 2 },
+      1 / (1 + CANVAS_LIMITS.ZOOM_STEP),
+      "smooth"
+    );
+  }, [transform, viewport.height, viewport.width]);
+
+  const handleResetView = useCallback(() => {
+    transform.restoreInitialView({ width: viewport.width, height: viewport.height });
+  }, [transform, viewport.height, viewport.width]);
+
   const updatePortfolioDraft = useCallback((next: Portfolio) => {
     if (!IS_EDITOR) return;
     setPortfolio(next);
@@ -217,6 +237,9 @@ function App() {
           onSelectGroup={handleSelectGroup}
           onSelectCard={handleSelectCard}
           onMinimapRecenter={handleMinimapRecenter}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetView={handleResetView}
           locale={locale}
           setLocale={setLocale}
           onFilterClick={handleFilterClick}
@@ -252,6 +275,9 @@ function App() {
           onSelectGroup={handleSelectGroup}
           onSelectCard={handleSelectCard}
           onMinimapRecenter={handleMinimapRecenter}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onResetView={handleResetView}
           locale={locale}
           setLocale={setLocale}
           onFilterClick={handleFilterClick}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { clamp, type Point, type Size, type Viewport } from "../utils/geometry";
+import { initialCanvasViewport } from "../config/canvasLayout";
 
 const MIN_ZOOM = 0.35;
 const MAX_ZOOM = 1.6;
@@ -21,6 +22,7 @@ export type CanvasTransform = {
   panBy: (dx: number, dy: number) => void;
   zoomAt: (client: Point, factor: number, behavior?: ZoomBehavior) => void;
   resetView: (canvasSize: Size) => void;
+  restoreInitialView: (canvasSize: Size) => void;
   focusOnPoint: (canvasPoint: Point, canvasSize: Size, scale?: number) => void;
   focusOnBounds: (
     bounds: { x: number; y: number; width: number; height: number },
@@ -185,6 +187,14 @@ export function useCanvasTransform(initial?: Partial<Viewport>): CanvasTransform
     [animateTo]
   );
 
+  const restoreInitialView = useCallback(
+    (canvasSize: Size) => {
+      if (!canvasSize.width || !canvasSize.height) return;
+      animateTo(initialCanvasViewport(canvasSize));
+    },
+    [animateTo]
+  );
+
   const focusOnPoint = useCallback(
     (canvasPoint: Point, canvasSize: Size, scale = 1) => {
       const targetScale = clamp(scale, MIN_ZOOM, MAX_ZOOM);
@@ -239,6 +249,7 @@ export function useCanvasTransform(initial?: Partial<Viewport>): CanvasTransform
     panBy,
     zoomAt,
     resetView,
+    restoreInitialView,
     focusOnPoint,
     focusOnBounds,
     isAnimating,

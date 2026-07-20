@@ -1,4 +1,5 @@
 import type { CardGroup } from "../types/portfolio";
+import type { Size, Viewport } from "../utils/geometry";
 
 export const CANVAS_LANE_Y: Record<CardGroup, number> = {
   profile: 0,
@@ -19,4 +20,17 @@ export const CANVAS_LAYOUT = {
   initialPadding: 80,
   initialMinScale: 0.3,
   initialMaxScale: 0.9,
+  initialScale: 0.6,
+  initialOffsetXRatio: 0.12,
+  initialOffsetYRatio: 0.1,
 } as const;
+
+export function initialCanvasViewport(canvasSize: Size): Viewport {
+  return {
+    x: canvasSize.width * CANVAS_LAYOUT.initialOffsetXRatio,
+    y: canvasSize.height * CANVAS_LAYOUT.initialOffsetYRatio,
+    width: canvasSize.width,
+    height: canvasSize.height,
+    scale: CANVAS_LAYOUT.initialScale,
+  };
+}

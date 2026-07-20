@@ -1,4 +1,3 @@
-import { useResponsiveMode } from "../../hooks/useResponsiveMode";
 import { useLocale } from "../../i18n/useLocale";
 
 type Props = {
@@ -9,15 +8,13 @@ type Props = {
 };
 
 export function ZoomControls({ onZoomIn, onZoomOut, onReset, scale }: Props) {
-  const mode = useResponsiveMode();
   const { locale } = useLocale();
-  if (mode !== "desktop") return null;
   return (
-    <div className="pointer-events-auto absolute bottom-6 right-6 z-30 flex items-center gap-1 rounded-full border border-border-soft bg-white/95 px-1 py-1 shadow-card backdrop-blur">
+    <div className="pointer-events-auto flex flex-none items-center gap-0.5 rounded-full border border-border-soft bg-white/95 p-0.5">
       <button
         type="button"
         onClick={onZoomOut}
-        className="h-7 w-7 rounded-full text-text-muted hover:bg-slate-100 hover:text-text-main"
+        className="h-6 w-6 rounded-full text-[12px] text-text-muted hover:bg-slate-100 hover:text-text-main"
         aria-label={locale === "en" ? "Zoom out" : "缩小"}
       >
         −
@@ -25,7 +22,7 @@ export function ZoomControls({ onZoomIn, onZoomOut, onReset, scale }: Props) {
       <button
         type="button"
         onClick={onReset}
-        className="h-7 min-w-[3rem] rounded-full px-2 text-[11px] font-mono text-text-muted hover:bg-slate-100 hover:text-text-main"
+        className="h-6 min-w-[2.7rem] rounded-full px-1.5 text-[10px] font-mono text-text-muted hover:bg-slate-100 hover:text-text-main"
         aria-label={locale === "en" ? "Reset view" : "重置视图"}
       >
         {Math.round(scale * 100)}%
@@ -33,7 +30,7 @@ export function ZoomControls({ onZoomIn, onZoomOut, onReset, scale }: Props) {
       <button
         type="button"
         onClick={onZoomIn}
-        className="h-7 w-7 rounded-full text-text-muted hover:bg-slate-100 hover:text-text-main"
+        className="h-6 w-6 rounded-full text-[12px] text-text-muted hover:bg-slate-100 hover:text-text-main"
         aria-label={locale === "en" ? "Zoom in" : "放大"}
       >
         +

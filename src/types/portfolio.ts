@@ -58,12 +58,19 @@ export type DetailMedia = {
   caption?: LocaleText;
 };
 
+export type DetailGroup = {
+  id: string;
+  title: LocaleText;
+  items: LocaleText[];
+};
+
 export type DetailSection = {
   id: string;
   title: LocaleText;
   paragraphs?: LocaleText[];
   items?: LocaleText[];
   metrics?: LocaleText[];
+  groups?: DetailGroup[];
   links?: CardLink[];
   media?: DetailMedia[];
 };
@@ -111,7 +118,6 @@ export type Card = {
 export type ConnectionType =
   | "profile-to-group"
   | "sequence"
-  | "project-sequence"
   | "related"
   | "fyp"
   | "skill";

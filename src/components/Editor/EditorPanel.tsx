@@ -222,6 +222,11 @@ export function EditorPanel({
                   paragraphs: section.paragraphs?.map((item) => ({ ...item })),
                   items: section.items?.map((item) => ({ ...item })),
                   metrics: section.metrics?.map((item) => ({ ...item })),
+                  groups: section.groups?.map((group) => ({
+                    ...group,
+                    title: { ...group.title },
+                    items: group.items.map((item) => ({ ...item })),
+                  })),
                   links: section.links?.map((link) => ({
                     ...link,
                     label: { ...link.label },

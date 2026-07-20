@@ -10,7 +10,6 @@ type Props = {
 
 const STROKE: Record<ConnectionType, { stroke: string; width: number; dash: string }> = {
   sequence: { stroke: "#64748b", width: 1.5, dash: "6 6" },
-  "project-sequence": { stroke: "#1E3A5F", width: 2.4, dash: "" },
   related: { stroke: "#94a3b8", width: 1, dash: "4 8" },
   fyp: { stroke: "#1E3A5F", width: 2.5, dash: "8 6" },
   "profile-to-group": { stroke: "#94a3b8", width: 1.2, dash: "" },
@@ -49,14 +48,6 @@ function curvePath(a: { x: number; y: number }, b: { x: number; y: number }) {
   return `M ${a.x},${a.y} C ${c1.x},${c1.y} ${c2.x},${c2.y} ${b.x},${b.y}`;
 }
 
-function connectionPath(
-  type: ConnectionType,
-  a: { x: number; y: number },
-  b: { x: number; y: number }
-) {
-  return type === "project-sequence" ? `M ${a.x},${a.y} L ${b.x},${b.y}` : curvePath(a, b);
-}
-
 export function ConnectionLayer({ connections, cardsById, highlighted, activeFilter, matchedConnections }: Props) {
   return (
     <svg
@@ -65,31 +56,19 @@ export function ConnectionLayer({ connections, cardsById, highlighted, activeFil
     >
       <defs>
         {Object.entries(STROKE).map(([k, s]) => {
-          const isProjectSequence = k === "project-sequence";
           return (
             <marker
               id={`arrow-${k}`}
               key={k}
               viewBox="0 0 10 10"
-              refX={isProjectSequence ? "8.5" : "9"}
+              refX="9"
               refY="5"
-              markerWidth={isProjectSequence ? "11" : "6"}
-              markerHeight={isProjectSequence ? "11" : "6"}
-              markerUnits={isProjectSequence ? "userSpaceOnUse" : "strokeWidth"}
+              markerWidth="6"
+              markerHeight="6"
+              markerUnits="strokeWidth"
               orient="auto-start-reverse"
             >
-              {isProjectSequence ? (
-                <path
-                  d="M2,1.5 L8.5,5 L2,8.5"
-                  fill="none"
-                  stroke={s.stroke}
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              ) : (
-                <path d="M0,0 L10,5 L0,10 z" fill={s.stroke} />
-              )}
+              <path d="M0,0 L10,5 L0,10 z" fill={s.stroke} />
             </marker>
           );
         })}
@@ -111,13 +90,13 @@ export function ConnectionLayer({ connections, cardsById, highlighted, activeFil
         return (
           <g key={c.id} style={{ opacity: baseOpacity }}>
             <path
-              d={connectionPath(c.type, a.from, a.to)}
+              d={curvePath(a.from, a.to)}
               fill="none"
               stroke={style.stroke}
               strokeWidth={style.width}
               strokeDasharray={style.dash || undefined}
               markerEnd={
-                c.type === "sequence" || c.type === "project-sequence" || c.type === "fyp"
+                c.type === "sequence" || c.type === "fyp"
                   ? `url(#arrow-${c.type})`
                   : undefined
               }

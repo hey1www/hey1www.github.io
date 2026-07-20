@@ -275,6 +275,18 @@ export const defaultPortfolio: Portfolio = {
               ),
             ],
           },
+          {
+            id: "languages",
+            title: text("Languages", "语言", "語言"),
+            items: [
+              text("Chinese — Native", "中文 — 母语", "中文 — 母語"),
+              text(
+                "English — CEFR B2 (IELTS overall 6.5, September 2025)",
+                "英文 — CEFR B2（雅思总分 6.5，2025 年 9 月）",
+                "英文 — CEFR B2（雅思總分 6.5，2025 年 9 月）"
+              ),
+            ],
+          },
         ],
         links: [
           { label: { en: "Email", zhHans: "邮箱", zhHant: "郵箱" }, url: "mailto:heyi.acct@outlook.com" },
@@ -353,12 +365,55 @@ export const defaultPortfolio: Portfolio = {
           {
             id: "study",
             title: text("Areas of Study", "学习方向", "學習方向"),
-            paragraphs: [
-              text(
-                "Coursework covered foundations of artificial intelligence, machine learning, deep learning, computer vision, machine learning in cybersecurity, big data analytics, data structures, object-oriented programming, databases, web systems, mobile applications, computer systems, the Internet of Things, and data communications.",
-                "课程覆盖人工智能基础、机器学习、深度学习、计算机视觉、网络安全中的机器学习、大数据分析、数据结构、面向对象编程、数据库、Web 系统、移动应用、计算机系统、物联网与数据通信。",
-                "課程涵蓋人工智能基礎、機器學習、深度學習、電腦視覺、網路安全中的機器學習、大數據分析、資料結構、物件導向程式設計、資料庫、Web 系統、行動應用、電腦系統、物聯網與資料通訊。"
-              ),
+            groups: [
+              {
+                id: "ai-data",
+                title: text("AI & Data Intelligence", "AI 与数据智能", "AI 與資料智能"),
+                items: [
+                  text("Computer Vision and Pattern Recognition", "计算机视觉与模式识别", "電腦視覺與模式識別"),
+                  text("Machine Learning in Cyber-Security", "网络安全中的机器学习", "網路安全中的機器學習"),
+                  text("Deep Learning and Deep Neural Networks", "深度学习与深度神经网络", "深度學習與深度神經網路"),
+                  text("Big Data Analytics", "大数据分析", "大數據分析"),
+                ],
+              },
+              {
+                id: "software-data",
+                title: text("Software & Data Systems", "软件与数据系统", "軟體與資料系統"),
+                items: [
+                  text("Data Structures", "数据结构", "資料結構"),
+                  text("Object-Oriented Design and Programming", "面向对象设计与编程", "物件導向設計與程式設計"),
+                  text("Database System", "数据库系统", "資料庫系統"),
+                  text("Web Systems and Technologies", "Web 系统与技术", "Web 系統與技術"),
+                ],
+              },
+              {
+                id: "devices-communications",
+                title: text("Intelligent Devices & Communications", "智能设备与通信", "智能裝置與通訊"),
+                items: [
+                  text("Introduction to Internet of Things", "物联网导论", "物聯網導論"),
+                  text("Data and Computer Communications", "数据与计算机通信", "資料與電腦通訊"),
+                  text("Computer Systems Principles", "计算机系统原理", "電腦系統原理"),
+                  text("Digital Signals and Systems", "数字信号与系统", "數位訊號與系統"),
+                ],
+              },
+              {
+                id: "math-engineering",
+                title: text("Mathematical & Engineering Foundations", "数学与工程基础", "數學與工程基礎"),
+                items: [
+                  text(
+                    "Basic Mathematics I — Calculus and Probability & Statistics",
+                    "基础数学 I — 微积分、概率与统计",
+                    "基礎數學 I — 微積分、概率與統計"
+                  ),
+                  text(
+                    "Basic Mathematics II — Calculus and Linear Algebra",
+                    "基础数学 II — 微积分与线性代数",
+                    "基礎數學 II — 微積分與線性代數"
+                  ),
+                  text("Foundations of Data Science", "数据科学基础", "資料科學基礎"),
+                  text("Engineering Management", "工程管理", "工程管理"),
+                ],
+              },
             ],
           },
           {
@@ -366,10 +421,26 @@ export const defaultPortfolio: Portfolio = {
             title: text("Capability Framework", "能力结构", "能力結構"),
             paragraphs: [text("My undergraduate training enables me to understand:", "本科训练使我能够同时理解：", "本科訓練使我能夠同時理解：")],
             items: [
-              text("How AI models are trained and evaluated.", "AI 模型如何训练和评估。", "AI 模型如何訓練與評估。"),
-              text("How software systems organise data, interfaces, and business logic.", "软件系统如何组织数据、接口与业务逻辑。", "軟體系統如何組織資料、介面與業務邏輯。"),
-              text("How intelligent devices combine sensors, communication protocols, and control logic into complete systems.", "智能设备如何通过传感器、通信协议和控制逻辑形成完整系统。", "智能裝置如何透過感測器、通訊協定與控制邏輯形成完整系統。"),
-              text("How research prototypes can become testable and demonstrable engineering implementations.", "研究原型如何进一步转化为可测试、可演示的工程实现。", "研究原型如何進一步轉化為可測試、可展示的工程實作。"),
+              text(
+                "Build and evaluate AI models and data-analysis workflows across vision, deep learning, security, and large-scale data.",
+                "围绕视觉、深度学习、安全与大规模数据构建并评估 AI 模型和数据分析流程。",
+                "圍繞視覺、深度學習、安全與大規模資料建構並評估 AI 模型及資料分析流程。"
+              ),
+              text(
+                "Design software and data systems using data structures, object-oriented modelling, databases, and web architecture.",
+                "运用数据结构、面向对象建模、数据库与 Web 架构设计软件和数据系统。",
+                "運用資料結構、物件導向建模、資料庫與 Web 架構設計軟體及資料系統。"
+              ),
+              text(
+                "Integrate computer systems, signals, IoT devices, and communication links into end-to-end intelligent systems.",
+                "将计算机系统、信号、物联网设备与通信链路集成为端到端智能系统。",
+                "將電腦系統、訊號、物聯網裝置與通訊鏈路整合為端到端智能系統。"
+              ),
+              text(
+                "Apply calculus, probability, statistics, linear algebra, and engineering management to analysis and delivery.",
+                "运用微积分、概率统计、线性代数与工程管理支持分析和工程交付。",
+                "運用微積分、概率統計、線性代數與工程管理支援分析及工程交付。"
+              ),
             ],
           },
           {
@@ -1054,17 +1125,6 @@ export const defaultPortfolio: Portfolio = {
 
     // Primary degree → exchange program
     { id: "c-edu-1", from: "edu-polyu", to: "edu-insa", type: "sequence" },
-
-    // Internship sequence (newer on the left → older on the right)
-    { id: "c-intern-1", from: "intern-ddiin", to: "intern-huatai", type: "sequence" },
-    { id: "c-intern-2", from: "intern-huatai", to: "intern-polyu-3d", type: "sequence" },
-
-    // Project sequence (left to right)
-    { id: "c-project-1", from: "project-career-portal", to: "project-uav-fyp", type: "project-sequence" },
-    { id: "c-project-2", from: "project-uav-fyp", to: "project-robot-car", type: "project-sequence" },
-    { id: "c-project-3", from: "project-robot-car", to: "project-sushiro", type: "project-sequence" },
-    { id: "c-project-4", from: "project-sushiro", to: "project-iot-monitoring", type: "project-sequence" },
-    { id: "c-project-5", from: "project-iot-monitoring", to: "project-swiftui-calculator", type: "project-sequence" },
 
     // FYP line from PolyU to FYP
     { id: "c-edu-fyp", from: "edu-polyu", to: "project-uav-fyp", type: "fyp" },

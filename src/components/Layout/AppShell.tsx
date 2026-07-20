@@ -16,6 +16,9 @@ type Props = {
   onSelectGroup: (g: CardGroup) => void;
   onSelectCard: (id: string) => void;
   onMinimapRecenter: (worldPoint: { x: number; y: number }) => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onResetView: () => void;
   locale: LocaleCode;
   setLocale: (l: LocaleCode) => void;
   onFilterClick: (filter: Exclude<SkillFilter, null>) => void;
@@ -37,6 +40,9 @@ export function AppShell({
   onSelectGroup,
   onSelectCard,
   onMinimapRecenter,
+  onZoomIn,
+  onZoomOut,
+  onResetView,
   locale,
   setLocale,
   onFilterClick,
@@ -94,6 +100,7 @@ export function AppShell({
               locale={locale}
               setLocale={setLocale}
               onFilterClick={onFilterClick}
+              showHeaderLanguage={false}
             />
           </div>
         )}
@@ -123,6 +130,9 @@ export function AppShell({
           boundsByCard={boundsByCard}
           viewport={viewport}
           onRecenter={onMinimapRecenter}
+          onZoomIn={onZoomIn}
+          onZoomOut={onZoomOut}
+          onReset={onResetView}
         />
       </div>
     </div>

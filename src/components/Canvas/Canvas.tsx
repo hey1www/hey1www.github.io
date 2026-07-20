@@ -2,13 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Card, CardGroup, Portfolio, SkillFilter } from "../../types/portfolio";
 import { CANVAS_LIMITS, useCanvasTransform, type CanvasTransform } from "../../hooks/useCanvasTransform";
 import { useCardRegistry, type CardSizeMap } from "../../hooks/useCardRegistry";
-import { fitBoundsToViewport, type Point } from "../../utils/geometry";
+import type { Point } from "../../utils/geometry";
 import { ConnectionLayer } from "./ConnectionLayer";
 import { TimelineAxis } from "./TimelineAxis";
 import { TimelineRows } from "./TimelineRows";
-import { ZoomControls } from "./ZoomControls";
 import { useResponsiveMode } from "../../hooks/useResponsiveMode";
-import { CANVAS_LAYOUT } from "../../config/canvasLayout";
+import { initialCanvasViewport } from "../../config/canvasLayout";
 
 type Props = {
   portfolio: Portfolio;
@@ -46,7 +45,7 @@ export function Canvas({
   editable = false,
   onCardChange,
 }: Props) {
-  const { viewport, zoomAt, resetView, focusOnPoint, focusOnBounds } = transform;
+  const { viewport, zoomAt, restoreInitialView, focusOnPoint, focusOnBounds } = transform;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -60,7 +59,7 @@ export function Canvas({
   } | null>(null);
   const mode = useResponsiveMode();
 
-  const { cardsById, cardsByGroup, allBounds } = useCardRegistry(
+  const { cardsById, cardsByGroup, groupBounds, allBounds } = useCardRegistry(
     portfolio,
     measuredCardSizes
   );
@@ -83,25 +82,12 @@ export function Canvas({
     return () => ro.disconnect();
   }, []);
 
-  // Initial framing: fit the whole canvas when the container first knows its size.
+  // Initial framing: keep the profile card near the upper-left at a readable 60%.
   const didInitialFit = useRef(false);
   useEffect(() => {
     if (didInitialFit.current) return;
     if (!containerSize.width || !containerSize.height || !allBounds) return;
-    const fitted = fitBoundsToViewport(
-      allBounds,
-      containerSize,
-      CANVAS_LAYOUT.initialPadding,
-      CANVAS_LAYOUT.initialMinScale,
-      CANVAS_LAYOUT.initialMaxScale
-    );
-    transform.setViewport({
-      x: fitted.x,
-      y: fitted.y,
-      width: containerSize.width,
-      height: containerSize.height,
-      scale: fitted.scale,
-    });
+    transform.setViewport(initialCanvasViewport(containerSize));
     didInitialFit.current = true;
   }, [containerSize, allBounds, transform]);
 
@@ -256,13 +242,7 @@ export function Canvas({
         );
       } else if (e.key === "0") {
         e.preventDefault();
-        if (allBounds) {
-          focusOnBounds(allBounds, containerSize, {
-            padding: CANVAS_LAYOUT.initialPadding,
-            minScale: CANVAS_LAYOUT.initialMinScale,
-            maxScale: CANVAS_LAYOUT.initialMaxScale,
-          });
-        }
+        restoreInitialView(containerSize);
       } else if ((e.key === "f" || e.key === "F") && activeCardId) {
         const card = cardsById[activeCardId];
         if (card) {
@@ -276,7 +256,7 @@ export function Canvas({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [activeCardId, cardsById, allBounds, containerSize, focusOnPoint, focusOnBounds, zoomAt]);
+  }, [activeCardId, cardsById, containerSize, focusOnPoint, restoreInitialView, zoomAt]);
 
   if (mode === "mobile") return null;
 
@@ -322,36 +302,7 @@ export function Canvas({
       </div>
 
       {/* Floating row-label overlay — stays glued to the viewport edge. */}
-      <TimelineAxis viewport={viewport} />
-
-      <ZoomControls
-        onZoomIn={() => {
-          const cx = containerSize.width / 2;
-          const cy = containerSize.height / 2;
-          zoomAt({ x: cx, y: cy }, 1 + CANVAS_LIMITS.ZOOM_STEP, "smooth");
-        }}
-        onZoomOut={() => {
-          const cx = containerSize.width / 2;
-          const cy = containerSize.height / 2;
-          zoomAt(
-            { x: cx, y: cy },
-            1 / (1 + CANVAS_LIMITS.ZOOM_STEP),
-            "smooth"
-          );
-        }}
-        onReset={() => {
-          if (allBounds) {
-            focusOnBounds(allBounds, containerSize, {
-              padding: CANVAS_LAYOUT.initialPadding,
-              minScale: CANVAS_LAYOUT.initialMinScale,
-              maxScale: CANVAS_LAYOUT.initialMaxScale,
-            });
-          } else {
-            resetView(containerSize);
-          }
-        }}
-        scale={viewport.scale}
-      />
+      <TimelineAxis viewport={viewport} groupBounds={groupBounds} />
     </div>
   );
 }

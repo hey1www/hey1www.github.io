@@ -1,8 +1,9 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CardGroup, Portfolio } from "../../types/portfolio";
 import { useLocale } from "../../i18n/useLocale";
 import type { CardBoundsMap } from "../../hooks/useCardRegistry";
 import { classNames } from "../../utils/classNames";
+import { ZoomControls } from "../Canvas/ZoomControls";
 
 const GROUP_COLORS: Record<CardGroup, string> = {
   profile: "#94a3b8",
@@ -16,21 +17,32 @@ type Props = {
   boundsByCard: CardBoundsMap;
   viewport: { x: number; y: number; width: number; height: number; scale: number };
   onRecenter: (worldPoint: { x: number; y: number }) => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onReset: () => void;
 };
 
-const MAP_W = 240;
+const MAP_W = 276;
 const MAP_H = 160;
 const PADDING = 12;
 
 /**
- * Read-only minimap. Shows a thumbnail of every card and a rectangle
- * representing the current viewport. Clicking the map recenters the
- * canvas; the rectangle itself is not draggable in v1 (reserved for
- * future expansion).
+ * Shows a thumbnail of every card and the current viewport. Pointer movement
+ * previews a new viewport position; clicking commits that position to the
+ * main canvas without changing its scale.
  */
-export function MiniMap({ portfolio, boundsByCard, viewport, onRecenter }: Props) {
+export function MiniMap({
+  portfolio,
+  boundsByCard,
+  viewport,
+  onRecenter,
+  onZoomIn,
+  onZoomOut,
+  onReset,
+}: Props) {
   const { locale } = useLocale();
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [previewCenter, setPreviewCenter] = useState<{ x: number; y: number } | null>(null);
 
   const layout = useMemo(() => {
     if (!portfolio.cards.length) {
@@ -55,13 +67,25 @@ export function MiniMap({ portfolio, boundsByCard, viewport, onRecenter }: Props
     return { scale, offsetX, offsetY, worldW, worldH };
   }, [portfolio, boundsByCard]);
 
-  function handleClick(e: React.MouseEvent<SVGSVGElement>) {
+  function mapPointFromPointer(e: React.PointerEvent<SVGSVGElement> | React.MouseEvent<SVGSVGElement>) {
     const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-    const worldX = (clickX - layout.offsetX) / layout.scale;
-    const worldY = (clickY - layout.offsetY) / layout.scale;
+    if (!rect) return null;
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * MAP_W,
+      y: ((e.clientY - rect.top) / rect.height) * MAP_H,
+    };
+  }
+
+  function handlePointerMove(e: React.PointerEvent<SVGSVGElement>) {
+    const point = mapPointFromPointer(e);
+    if (point) setPreviewCenter(point);
+  }
+
+  function handleClick(e: React.MouseEvent<SVGSVGElement>) {
+    const point = previewCenter ?? mapPointFromPointer(e);
+    if (!point) return;
+    const worldX = (point.x - layout.offsetX) / layout.scale;
+    const worldY = (point.y - layout.offsetY) / layout.scale;
     onRecenter({ x: worldX, y: worldY });
   }
 
@@ -74,22 +98,31 @@ export function MiniMap({ portfolio, boundsByCard, viewport, onRecenter }: Props
   const rectY = viewWorldY * layout.scale + layout.offsetY;
   const rectW = viewWorldW * layout.scale;
   const rectH = viewWorldH * layout.scale;
+  const displayRectX = previewCenter ? previewCenter.x - rectW / 2 : rectX;
+  const displayRectY = previewCenter ? previewCenter.y - rectH / 2 : rectY;
 
   return (
     <div className="border-t border-border-soft bg-white/70 px-3 py-3">
-      <div className="mb-1.5 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.18em] text-text-muted">
+      <div className="mb-1.5 flex min-h-7 items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted">
         <span>{locale === "en" ? "Minimap" : "缩略图"}</span>
-        <span>{Math.round(viewport.scale * 100)}%</span>
+        <ZoomControls
+          onZoomIn={onZoomIn}
+          onZoomOut={onZoomOut}
+          onReset={onReset}
+          scale={viewport.scale}
+        />
       </div>
       <svg
         ref={svgRef}
         width={MAP_W}
         height={MAP_H}
         viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={() => setPreviewCenter(null)}
         onClick={handleClick}
         className={classNames(
           "block rounded-md border border-border-soft bg-canvas-bg",
-          "cursor-crosshair"
+          "cursor-pointer"
         )}
         role="img"
         aria-label={locale === "en" ? "Portfolio minimap" : "履历缩略图"}
@@ -111,8 +144,8 @@ export function MiniMap({ portfolio, boundsByCard, viewport, onRecenter }: Props
           );
         })}
         <rect
-          x={rectX}
-          y={rectY}
+          x={displayRectX}
+          y={displayRectY}
           width={Math.max(8, rectW)}
           height={Math.max(8, rectH)}
           rx={2}

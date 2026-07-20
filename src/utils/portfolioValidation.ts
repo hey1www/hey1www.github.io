@@ -120,6 +120,20 @@ export function validatePortfolio(value: unknown): PortfolioValidationResult {
           errors.push(`Card ${card.id} section ${section.id} has invalid ${field}.`);
         }
       }
+      const groups = Array.isArray(section.groups) ? section.groups : [];
+      for (const group of groups) {
+        if (
+          !isRecord(group) ||
+          typeof group.id !== "string" ||
+          !group.id ||
+          !hasLocaleText(group.title) ||
+          !Array.isArray(group.items) ||
+          !group.items.length ||
+          group.items.some((item) => !hasLocaleText(item))
+        ) {
+          errors.push(`Card ${card.id} section ${section.id} has an invalid group.`);
+        }
+      }
       const sectionLinks = Array.isArray(section.links) ? section.links : [];
       for (const link of sectionLinks) {
         if (!isRecord(link) || typeof link.url !== "string" || !link.url || !hasLocaleText(link.label)) {

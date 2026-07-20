@@ -16,6 +16,7 @@ export type SidebarProps = {
   locale: LocaleCode;
   setLocale: (l: LocaleCode) => void;
   onFilterClick: (filter: Exclude<SkillFilter, null>) => void;
+  showHeaderLanguage?: boolean;
 };
 
 const GROUP_ORDER: CardGroup[] = ["profile", "education", "internship", "project"];
@@ -48,6 +49,7 @@ export function Sidebar({
   locale,
   setLocale,
   onFilterClick,
+  showHeaderLanguage = true,
 }: SidebarProps) {
   const { t } = useLocale();
 
@@ -83,12 +85,17 @@ export function Sidebar({
             </p>
           </>
         )}
-        <a
-          href={`mailto:${portfolio.profile.email}`}
-          className="mt-2 inline-block font-sans-cjk text-[12px] text-text-muted hover:text-navy"
-        >
-          {portfolio.profile.email}
-        </a>
+        <div className="mt-2 flex min-w-0 items-center justify-between gap-2">
+          <a
+            href={`mailto:${portfolio.profile.email}`}
+            className="min-w-0 truncate font-sans-cjk text-[11px] text-text-muted hover:text-navy"
+          >
+            {portfolio.profile.email}
+          </a>
+          {showHeaderLanguage && (
+            <LanguageSwitcher locale={locale} onChange={setLocale} compact />
+          )}
+        </div>
       </div>
 
       {/* Section list */}
@@ -173,11 +180,6 @@ export function Sidebar({
             })}
           </div>
         </section>
-      </div>
-
-      {/* Bottom: language switcher */}
-      <div className="border-t border-border-soft/60 px-4 py-3">
-        <LanguageSwitcher locale={locale} onChange={setLocale} />
       </div>
     </nav>
   );

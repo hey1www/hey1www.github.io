@@ -1,10 +1,12 @@
 import { useLocale } from "../../i18n/useLocale";
 import type { Viewport } from "../../utils/geometry";
 import { CANVAS_LANE_Y } from "../../config/canvasLayout";
+import type { UseCardRegistryResult } from "../../hooks/useCardRegistry";
 
 type Props = {
   /** Live viewport — used to project world coords into screen pixels. */
   viewport: Viewport;
+  groupBounds: UseCardRegistryResult["groupBounds"];
 };
 
 const ROW_LABELS: Record<string, { en: string; zhHans: string; zhHant: string }> = {
@@ -18,15 +20,19 @@ const ROWS = ["profile", "education", "internship", "project"] as const;
 
 function RowLabels({
   viewport,
+  groupBounds,
 }: {
   viewport: Viewport;
+  groupBounds: UseCardRegistryResult["groupBounds"];
 }) {
   const { locale } = useLocale();
   const project = (worldY: number) => worldY * viewport.scale + viewport.y;
   return (
     <>
       {ROWS.map((key) => {
-        const screenY = project(CANVAS_LANE_Y[key]);
+        const bounds = groupBounds[key];
+        const worldY = bounds ? bounds.y + bounds.height / 2 : CANVAS_LANE_Y[key];
+        const screenY = project(worldY);
         return (
           <div
             key={key}
@@ -50,11 +56,11 @@ function RowLabels({
  * positioned in screen space using the live viewport so they stay glued to
  * the canvas edge while the user pans/zooms.
  */
-export function TimelineAxis({ viewport }: Props) {
+export function TimelineAxis({ viewport, groupBounds }: Props) {
   return (
     <>
       {/* Row labels — sticky to the left edge. */}
-      <RowLabels viewport={viewport} />
+      <RowLabels viewport={viewport} groupBounds={groupBounds} />
     </>
   );
 }
