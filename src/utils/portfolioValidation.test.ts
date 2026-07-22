@@ -24,7 +24,7 @@ test("accepts the featured FYP data and its three-locale metrics", () => {
   assert.deepEqual(fyp.details.links, [
     {
       label: { en: "GitHub Repository", zhHans: "Github仓库", zhHant: "Github倉庫" },
-      url: "http://portal.heyi-direct.site/",
+      url: "https://github.com/hey1www/connectivity-aware-uav-path-planning",
     },
   ]);
 

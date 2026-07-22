@@ -832,7 +832,7 @@ export const defaultPortfolio: Portfolio = {
           zhHant: "PyTorch、行為克隆、Dueling DDQN、GNN、Weighted Dijkstra、NetworkX、CVXPY、NumPy 推理、穩健評估、HTML/JavaScript Demo",
         },
         links: [
-          { label: text("GitHub Repository", "Github仓库", "Github倉庫"), url: "http://portal.heyi-direct.site/" },
+          { label: text("GitHub Repository", "Github仓库", "Github倉庫"), url: "https://github.com/hey1www/connectivity-aware-uav-path-planning" },
         ],
         sections: [
           {
