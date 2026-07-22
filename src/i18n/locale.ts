@@ -14,6 +14,12 @@ export const LOCALE_HTML_LANG: Record<LocaleCode, string> = {
   zhHant: "zh-Hant",
 };
 
+export const PAGE_TITLES: Record<LocaleCode, string> = {
+  en: "Interactive Resume - Zouheyi WANG",
+  zhHans: "互动式主页 - 王邹鹤仪",
+  zhHant: "互動式主頁 - 王鄒鶴儀",
+};
+
 export const LOCALE_STORAGE_KEY = "heyi-portal:locale";
 
 const TRADITIONAL_CHINESE_REGIONS = new Set(["tw", "hk", "mo"]);

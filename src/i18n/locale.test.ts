@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { detectLocale, localeFromLanguageTag } from "./locale";
+import { detectLocale, localeFromLanguageTag, PAGE_TITLES } from "./locale";
+
+test("provides the requested page title for every supported locale", () => {
+  assert.deepEqual(PAGE_TITLES, {
+    en: "Interactive Resume - Zouheyi WANG",
+    zhHans: "互动式主页 - 王邹鹤仪",
+    zhHant: "互動式主頁 - 王鄒鶴儀",
+  });
+});
 
 test("maps English browser language tags to English", () => {
   assert.equal(localeFromLanguageTag("en-US"), "en");

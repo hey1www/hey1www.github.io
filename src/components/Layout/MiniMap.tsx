@@ -40,7 +40,7 @@ export function MiniMap({
   onZoomOut,
   onReset,
 }: Props) {
-  const { locale } = useLocale();
+  const { t } = useLocale();
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [previewCenter, setPreviewCenter] = useState<{ x: number; y: number } | null>(null);
 
@@ -103,8 +103,10 @@ export function MiniMap({
 
   return (
     <div className="border-t border-border-soft bg-white/70 px-3 py-3">
-      <div className="mb-1.5 flex min-h-7 items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-text-muted">
-        <span>{locale === "en" ? "Minimap" : "缩略图"}</span>
+      <div className="mb-1.5 flex items-center justify-between gap-2 font-mono uppercase text-text-muted">
+        <span className="flex h-[30px] items-center text-[13px] font-semibold tracking-[0.08em]">
+          {t({ en: "Minimap", zhHans: "缩略图", zhHant: "縮略圖" })}
+        </span>
         <ZoomControls
           onZoomIn={onZoomIn}
           onZoomOut={onZoomOut}
@@ -125,7 +127,7 @@ export function MiniMap({
           "cursor-pointer"
         )}
         role="img"
-        aria-label={locale === "en" ? "Portfolio minimap" : "履历缩略图"}
+        aria-label={t({ en: "Portfolio minimap", zhHans: "履历缩略图", zhHant: "履歷縮略圖" })}
       >
         {portfolio.cards.map((card) => {
           const b = boundsByCard[card.id];

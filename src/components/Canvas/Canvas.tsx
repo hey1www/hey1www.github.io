@@ -213,6 +213,17 @@ export function Canvas({
     (window as any).__heyi_focusCard = (id: string) => {
       const card = cardsById[id];
       if (!card || !containerSize.width || !containerSize.height) return;
+      if (card.featuredProject) {
+        focusOnPoint(
+          {
+            x: card.position.x + card.size.width / 2,
+            y: card.position.y + card.size.height / 2,
+          },
+          containerSize,
+          1
+        );
+        return;
+      }
       const bounds = {
         x: card.position.x,
         y: card.position.y,
@@ -221,7 +232,7 @@ export function Canvas({
       };
       focusOnBounds(bounds, containerSize, { padding: 60, minScale: 0.7, maxScale: 1.1 });
     };
-  }, [cardsByGroup, cardsById, containerSize, focusOnBounds]);
+  }, [cardsByGroup, cardsById, containerSize, focusOnBounds, focusOnPoint]);
 
   // Keyboard shortcuts.
   useEffect(() => {

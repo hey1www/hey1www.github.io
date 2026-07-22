@@ -64,15 +64,43 @@ export type DetailGroup = {
   items: LocaleText[];
 };
 
+export type ProjectMetric = {
+  id: string;
+  value: LocaleText;
+  label: LocaleText;
+  note: LocaleText;
+  tooltip?: LocaleText;
+};
+
+export type DetailSectionVariant =
+  | "standard"
+  | "hero"
+  | "process"
+  | "comparison"
+  | "metrics"
+  | "cards"
+  | "stack";
+
 export type DetailSection = {
   id: string;
   title: LocaleText;
+  variant?: DetailSectionVariant;
+  callout?: LocaleText;
   paragraphs?: LocaleText[];
   items?: LocaleText[];
   metrics?: LocaleText[];
+  projectMetrics?: ProjectMetric[];
   groups?: DetailGroup[];
   links?: CardLink[];
   media?: DetailMedia[];
+};
+
+export type FeaturedProject = {
+  category: LocaleText;
+  ownership: LocaleText;
+  cardMetrics: ProjectMetric[];
+  detailMetrics: ProjectMetric[];
+  featuredSkillIds: SkillId[];
 };
 
 export type Card = {
@@ -98,6 +126,8 @@ export type Card = {
     links?: CardLink[];
     sections?: DetailSection[];
   };
+
+  featuredProject?: FeaturedProject;
 
   skills: SkillId[];
   trackIds: SkillTrackId[];

@@ -13,9 +13,10 @@ export const CANVAS_CARD_SIZE = { width: 480, height: 360 } as const;
 export const CANVAS_DENSE_CARD_SIZE = { width: 480, height: 420 } as const;
 export const CANVAS_PROFILE_SIZE = { width: 480, height: 340 } as const;
 export const CANVAS_PRIMARY_CARD_SIZE = { width: 480, height: 420 } as const;
+export const CANVAS_FEATURED_CARD_SIZE = { width: 600, height: 370 } as const;
 
 export const CANVAS_LAYOUT = {
-  worldWidth: 3080,
+  worldWidth: 3200,
   cardGap: 40,
   initialPadding: 80,
   initialMinScale: 0.3,

@@ -3,6 +3,7 @@ import type { CardGroup, Portfolio, SkillFilter } from "../../types/portfolio";
 import { useLocale } from "../../i18n/useLocale";
 import { classNames } from "../../utils/classNames";
 import { visibleSummary } from "../../utils/text";
+import { SkillTag } from "./SkillTag";
 
 type Props = {
   portfolio: Portfolio;
@@ -123,6 +124,7 @@ export function MobileListView({
         <ul className="mt-3 space-y-3">
           {cards.map((card) => {
             const isDimmed = matchedCardIds ? !matchedCardIds.has(card.id) : false;
+            const featured = card.featuredProject;
             const titleText = t(card.title);
             const subtitleText = t(card.subtitle);
             const roleText = t(card.role);
@@ -130,9 +132,15 @@ export function MobileListView({
             const tracks = card.trackIds
               .map((id) => portfolio.skillTracks.find((track) => track.id === id))
               .filter((track): track is NonNullable<typeof track> => Boolean(track));
-            const skills = card.skills
+            const primarySkills = (featured?.featuredSkillIds ?? card.skills)
               .map((id) => portfolio.skills.find((skill) => skill.id === id))
               .filter((skill): skill is NonNullable<typeof skill> => Boolean(skill));
+            const secondarySkills = featured
+              ? card.skills
+                  .filter((id) => !featured.featuredSkillIds.includes(id))
+                  .map((id) => portfolio.skills.find((skill) => skill.id === id))
+                  .filter((skill): skill is NonNullable<typeof skill> => Boolean(skill))
+              : [];
             return (
               <li
                 key={card.id}
@@ -147,9 +155,14 @@ export function MobileListView({
                 <h3 className="font-title font-title-strong mt-1 break-words text-[18px] leading-snug text-text-main">
                   {titleText}
                 </h3>
-                {card.subtitle && (
+                {card.subtitle && !featured && (
                   <p className="font-title mt-0.5 break-words text-sm leading-snug text-text-muted">
                     {subtitleText}
+                  </p>
+                )}
+                {featured && (
+                  <p className="mt-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.05em] text-navy">
+                    {t(featured.category)}
                   </p>
                 )}
                 {card.role && (
@@ -162,7 +175,17 @@ export function MobileListView({
                     {summaryText}
                   </p>
                 )}
-                {tracks.length > 0 && (
+                {featured && (
+                  <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-md border border-border-soft bg-slate-50/80">
+                    {featured.cardMetrics.map((metric, index) => (
+                      <div key={metric.id} className={classNames("min-w-0 px-2 py-2.5", index > 0 && "border-l border-border-soft")}>
+                        <p className="font-title text-[18px] font-bold leading-none text-navy">{t(metric.value)}</p>
+                        <p className="mt-1 text-[9px] font-semibold leading-tight text-text-main/80">{t(metric.label)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {!featured && tracks.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {tracks.map((track) => (
                       <button
@@ -176,17 +199,38 @@ export function MobileListView({
                     ))}
                   </div>
                 )}
-                {skills.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {skills.map((skill) => (
+                {primarySkills.length > 0 && (
+                  <div data-skill-tier="primary" className="mt-2 flex flex-wrap gap-1">
+                    {primarySkills.map((skill) => (
                       <button
                         key={skill.id}
                         type="button"
                         onClick={() => onFilterClick({ kind: "skill", id: skill.id })}
-                        className="rounded-full border border-border-soft px-2 py-0.5 text-[10px] font-mono text-text-muted"
+                        className={classNames(
+                          "rounded-full border px-2 py-0.5 text-[10px] font-mono",
+                          featured
+                            ? "border-navy/20 bg-navy/5 font-semibold text-navy"
+                            : "border-border-soft text-text-muted"
+                        )}
                       >
                         {t(skill.label)}
                       </button>
+                    ))}
+                  </div>
+                )}
+                {secondarySkills.length > 0 && (
+                  <div
+                    data-skill-tier="secondary"
+                    className="mt-1.5 flex flex-wrap gap-1"
+                    aria-label={locale === "en" ? "Additional skills" : "其他技能"}
+                  >
+                    {secondarySkills.map((skill) => (
+                      <SkillTag
+                        key={skill.id}
+                        skill={skill}
+                        active={activeFilter?.kind === "skill" && activeFilter.id === skill.id}
+                        onClick={() => onFilterClick({ kind: "skill", id: skill.id })}
+                      />
                     ))}
                   </div>
                 )}
@@ -196,7 +240,7 @@ export function MobileListView({
                     onClick={() => onOpenDetails(card.id)}
                     className="rounded-md border border-navy px-3 py-1 font-mono text-[11px] uppercase text-navy"
                   >
-                    {t({ en: "Expand Details", zhHans: "查看详情", zhHant: "查看詳情" })}
+                    {t({ en: "View Details", zhHans: "查看详情", zhHant: "查看詳情" })}
                   </button>
                 </div>
               </li>

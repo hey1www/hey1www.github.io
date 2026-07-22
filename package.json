@@ -16,7 +16,9 @@
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "test:locale": "tsx --test src/i18n/locale.test.ts"
+    "test": "npm run test:locale && npm run test:portfolio",
+    "test:locale": "tsx --test src/i18n/locale.test.ts",
+    "test:portfolio": "tsx --test src/utils/portfolioValidation.test.ts"
   },
   "dependencies": {
     "react": "^18.3.1",

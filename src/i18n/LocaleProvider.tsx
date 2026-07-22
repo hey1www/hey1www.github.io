@@ -5,6 +5,7 @@ import {
   pickLocaleText,
   readStoredLocale,
   LOCALE_HTML_LANG,
+  PAGE_TITLES,
 } from "./locale";
 import { LocaleContext, type LocaleContextValue } from "./LocaleContext";
 import type { LocaleCode, LocaleText } from "../types/portfolio";
@@ -30,6 +31,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.documentElement.lang = LOCALE_HTML_LANG[locale];
+      document.title = PAGE_TITLES[locale];
     }
   }, [locale]);
 

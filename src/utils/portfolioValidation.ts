@@ -3,6 +3,15 @@ import type { LocaleCode, LocaleText, Portfolio } from "../types/portfolio";
 const REQUIRED_LOCALES: LocaleCode[] = ["en", "zhHans", "zhHant"];
 const CARD_GROUPS = new Set(["profile", "education", "internship", "project"]);
 const SKILL_TRACK_IDS = new Set(["llm-ai", "ai-vision", "software-data", "iot-device"]);
+const DETAIL_SECTION_VARIANTS = new Set([
+  "standard",
+  "hero",
+  "process",
+  "comparison",
+  "metrics",
+  "cards",
+  "stack",
+]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -11,6 +20,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function hasLocaleText(value: unknown): value is LocaleText {
   if (!isRecord(value)) return false;
   return REQUIRED_LOCALES.every((locale) => typeof value[locale] === "string" && value[locale] !== "");
+}
+
+function validateProjectMetric(metric: unknown, context: string, errors: string[]) {
+  if (
+    !isRecord(metric) ||
+    typeof metric.id !== "string" ||
+    !metric.id ||
+    !hasLocaleText(metric.value) ||
+    !hasLocaleText(metric.label) ||
+    !hasLocaleText(metric.note) ||
+    (metric.tooltip !== undefined && !hasLocaleText(metric.tooltip))
+  ) {
+    errors.push(`${context} has an invalid project metric.`);
+  }
 }
 
 export type PortfolioValidationResult =
@@ -100,6 +123,34 @@ export function validatePortfolio(value: unknown): PortfolioValidationResult {
         errors.push(`Card ${card.id} references unknown skill track: ${String(trackId)}`);
       }
     }
+    if (card.featuredProject !== undefined) {
+      const featured = card.featuredProject;
+      if (
+        !isRecord(featured) ||
+        !hasLocaleText(featured.category) ||
+        !hasLocaleText(featured.ownership) ||
+        !Array.isArray(featured.cardMetrics) ||
+        featured.cardMetrics.length !== 3 ||
+        !Array.isArray(featured.detailMetrics) ||
+        featured.detailMetrics.length !== 4 ||
+        !Array.isArray(featured.featuredSkillIds) ||
+        featured.featuredSkillIds.length !== 5
+      ) {
+        errors.push(`Card ${card.id} has invalid featuredProject data.`);
+      } else {
+        featured.cardMetrics.forEach((metric) =>
+          validateProjectMetric(metric, `Card ${card.id} featuredProject.cardMetrics`, errors)
+        );
+        featured.detailMetrics.forEach((metric) =>
+          validateProjectMetric(metric, `Card ${card.id} featuredProject.detailMetrics`, errors)
+        );
+        for (const skillId of featured.featuredSkillIds) {
+          if (typeof skillId !== "string" || !skillIds.has(skillId)) {
+            errors.push(`Card ${card.id} featuredProject references unknown skill: ${String(skillId)}`);
+          }
+        }
+      }
+    }
     const links = isRecord(card.details) && Array.isArray(card.details.links) ? card.details.links : [];
     for (const link of links) {
       if (!isRecord(link) || typeof link.url !== "string" || !link.url || !hasLocaleText(link.label)) {
@@ -114,12 +165,25 @@ export function validatePortfolio(value: unknown): PortfolioValidationResult {
         errors.push(`Card ${card.id} has an invalid detail section.`);
         continue;
       }
+      if (
+        section.variant !== undefined &&
+        (typeof section.variant !== "string" || !DETAIL_SECTION_VARIANTS.has(section.variant))
+      ) {
+        errors.push(`Card ${card.id} section ${section.id} has an invalid variant.`);
+      }
+      if (section.callout !== undefined && !hasLocaleText(section.callout)) {
+        errors.push(`Card ${card.id} section ${section.id} has an invalid callout.`);
+      }
       for (const field of ["paragraphs", "items", "metrics"] as const) {
         const entries = Array.isArray(section[field]) ? section[field] : [];
         if (entries.some((entry) => !hasLocaleText(entry))) {
           errors.push(`Card ${card.id} section ${section.id} has invalid ${field}.`);
         }
       }
+      const projectMetrics = Array.isArray(section.projectMetrics) ? section.projectMetrics : [];
+      projectMetrics.forEach((metric) =>
+        validateProjectMetric(metric, `Card ${card.id} section ${section.id}`, errors)
+      );
       const groups = Array.isArray(section.groups) ? section.groups : [];
       for (const group of groups) {
         if (

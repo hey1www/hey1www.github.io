@@ -1,14 +1,22 @@
-import type { LocaleText, Portfolio } from "../types/portfolio";
+import type { LocaleText, Portfolio, ProjectMetric } from "../types/portfolio";
 import {
   CANVAS_CARD_SIZE,
   CANVAS_COMPACT_CARD_SIZE,
   CANVAS_DENSE_CARD_SIZE,
+  CANVAS_FEATURED_CARD_SIZE,
   CANVAS_LANE_Y,
-  CANVAS_PRIMARY_CARD_SIZE,
   CANVAS_PROFILE_SIZE,
 } from "../config/canvasLayout";
 
 const text = (en: string, zhHans: string, zhHant: string): LocaleText => ({ en, zhHans, zhHant });
+
+const metric = (
+  id: string,
+  value: string,
+  label: LocaleText,
+  note: LocaleText,
+  tooltip?: LocaleText
+): ProjectMetric => ({ id, value: text(value, value, value), label, note, tooltip });
 
 const DETAIL_TITLES = {
   overview: text("Project Overview", "项目概述", "專案概述"),
@@ -128,7 +136,8 @@ export const defaultPortfolio: Portfolio = {
     { id: "rag", label: { en: "RAG Workflow", zhHans: "RAG 工作流", zhHant: "RAG 工作流" }, category: "ai" },
     { id: "imitation", label: { en: "Imitation Learning", zhHans: "模仿学习", zhHant: "模仿學習" }, category: "ml" },
     { id: "rl", label: { en: "Reinforcement Learning", zhHans: "强化学习", zhHant: "強化學習" }, category: "ml" },
-    { id: "graph-policy", label: { en: "Graph Policy", zhHans: "图级策略", zhHant: "圖級策略" }, category: "ml" },
+    { id: "graph-policy", label: { en: "Graph RL", zhHans: "图强化学习", zhHant: "圖強化學習" }, category: "ml" },
+    { id: "gnn", label: { en: "GNN", zhHans: "GNN", zhHant: "GNN" }, category: "ml" },
     { id: "yolov5", label: { en: "YOLOv5", zhHans: "YOLOv5", zhHant: "YOLOv5" }, category: "ml" },
     { id: "cv", label: { en: "OpenCV", zhHans: "OpenCV", zhHant: "OpenCV" }, category: "ml" },
     { id: "pointcloud", label: { en: "Point Cloud", zhHans: "点云处理", zhHant: "點雲處理" }, category: "ml" },
@@ -149,6 +158,7 @@ export const defaultPortfolio: Portfolio = {
 
     { id: "numpy", label: { en: "NumPy", zhHans: "NumPy", zhHant: "NumPy" }, category: "data" },
     { id: "networkx", label: { en: "NetworkX", zhHans: "NetworkX", zhHant: "NetworkX" }, category: "data" },
+    { id: "dijkstra", label: { en: "Dijkstra", zhHans: "Dijkstra", zhHant: "Dijkstra" }, category: "data" },
     { id: "cvxpy", label: { en: "CVXPY", zhHans: "CVXPY", zhHant: "CVXPY" }, category: "data" },
     { id: "matplotlib", label: { en: "Matplotlib", zhHans: "Matplotlib", zhHant: "Matplotlib" }, category: "data" },
     { id: "sqlite", label: { en: "SQLite", zhHans: "SQLite", zhHant: "SQLite" }, category: "data" },
@@ -776,9 +786,9 @@ export const defaultPortfolio: Portfolio = {
       id: "project-uav-fyp",
       group: "project",
       title: {
-        en: "Communication-Aware UAV Path Planning",
-        zhHans: "通信感知型无人机路径规划",
-        zhHant: "通訊感知型無人機路徑規劃",
+        en: "Communication Aware UAV Path Planning",
+        zhHans: "通信约束无人机路径规划",
+        zhHant: "通訊約束無人機路徑規劃",
       },
       subtitle: {
         en: "Final Year Project",
@@ -793,61 +803,205 @@ export const defaultPortfolio: Portfolio = {
       startDate: "2025-09",
       endDate: "2026-04",
       summary: {
-        en: "Built a UAV path-planning system that balances flight efficiency and cellular connectivity, covering data generation, baseline algorithms, imitation learning, graph-level reinforcement learning, safety mechanisms, and deployment evaluation.",
-        zhHans: "构建同时考虑飞行效率与蜂窝网络连接质量的无人机路径规划系统，覆盖数据生成、基线算法、模仿学习、图级强化学习、安全机制和部署评测。",
-        zhHant: "建構同時考慮飛行效率與蜂巢網路連線品質的無人機路徑規劃系統，涵蓋資料生成、基線演算法、模仿學習、圖級強化學習、安全機制與部署評測。",
+        en: "Reframed long-horizon low-level UAV control as graph-level base-station handover decisions, combining classical planning, Graph RL, and deterministic recovery to generate communication-feasible paths.",
+        zhHans: "将长时程 UAV 低层飞行控制重构为图级基站切换决策，结合经典规划、图强化学习与确定性回退生成通信可行路径。",
+        zhHant: "將長時程 UAV 低層飛行控制重構為圖級基地台切換決策，結合經典規劃、圖強化學習與確定性回退生成通訊可行路徑。",
       },
       details: {
         overview: {
-          en: "A research-style FYP that uses learning-based planners to keep UAVs connected to cellular base stations while reaching their goal.",
-          zhHans: "一项研究型毕业设计,使用学习型规划器让无人机在到达目标的同时保持与基站连接。",
-          zhHant: "一項研究型畢業設計,使用學習型規劃器讓無人機在到達目標的同時保持與基地台連線。",
+          en: "Under a hard requirement for continuous cellular connectivity, the project models UAV path planning as a base-station overlap graph and combines classical planning, graph-level learning, and deterministic recovery.",
+          zhHans: "在全程蜂窝网络连接硬约束下，将 UAV 路径规划建模为基站覆盖重叠图，并结合经典规划、图级学习与确定性回退完成路径决策。",
+          zhHant: "在全程蜂巢網路連線硬約束下，將 UAV 路徑規劃建模為基地台覆蓋重疊圖，並結合經典規劃、圖級學習與確定性回退完成路徑決策。",
         },
         whatIDid: [
-          {
-            en: "Project Goal: Developed a UAV path planning system that balances route efficiency and cellular connectivity, since the shortest path may pass through weak-coverage areas.",
-            zhHans: "项目目标:开发一个无人机路径规划系统,在规划路径时同时考虑飞行效率和蜂窝网络连接质量,因为最短路径可能会经过弱覆盖区域。",
-            zhHant: "專案目標:開發一個無人機路徑規劃系統,在規劃路徑時同時考慮飛行效率與蜂巢網路連線品質,因為最短路徑可能會經過弱覆蓋區域。",
-          },
-          {
-            en: "Simulation and Dataset Pipeline: Built a Python-based simulation pipeline with 100 simulated 10 km × 10 km maps, 10 ground base stations per map, and 600 hard-case expert trajectories for training and evaluation.",
-            zhHans: "仿真与数据集流程:搭建基于 Python 的仿真流程,包含 100 个 10 km × 10 km 模拟地图,每个地图包含 10 个地面基站,并生成 600 条高难度专家轨迹用于训练和评估。",
-            zhHant: "模擬與資料集流程:搭建基於 Python 的模擬流程,包含 100 個 10 km × 10 km 模擬地圖,每個地圖包含 10 個地面基地台,並生成 600 條高難度專家軌跡用於訓練與評估。",
-          },
-          {
-            en: "AI Planning Methods: Compared grid/graph planning baselines with imitation learning and graph-level reinforcement learning, then shifted the main RL design from low-level heading control to higher-level handover decisions.",
-            zhHans: "AI 路径规划方法:比较 grid/graph 规划 baseline、模仿学习和图级强化学习方法,并将主要 RL 设计从低层飞行方向控制调整为更高层的基站切换决策。",
-            zhHant: "AI 路徑規劃方法:比較 grid/graph 規劃 baseline、模仿學習與圖級強化學習方法,並將主要 RL 設計從低層飛行方向控制調整為更高層的基地台切換決策。",
-          },
-          {
-            en: "Evaluation and Demo: Added feasibility masks, SmartShield, fallback logic, and benchmark scripts for success rate, robustness, radio replay, and latency; the final graph policy achieved 0.9290 audit robust score, 93.75% budget-3 success, and 0.244 ms p95 deploy latency.",
-            zhHans: "评估与 Demo:加入可行性 mask、SmartShield、fallback 逻辑,以及用于 success rate、robustness、radio replay 和 latency 的 benchmark 脚本;最终 graph policy 达到 0.9290 audit robust score、93.75% budget-3 success 和 0.244 ms p95 deploy latency。",
-            zhHant: "評估與 Demo:加入可行性 mask、SmartShield、fallback 邏輯,以及用於 success rate、robustness、radio replay 與 latency 的 benchmark 腳本;最終 graph policy 達到 0.9290 audit robust score、93.75% budget-3 success 與 0.244 ms p95 deploy latency。",
-          },
+          text(
+            "Independently completed problem formulation, simulation and expert-data generation, Grid/Graph baselines, IL/RL/GNN development, robust evaluation, NumPy inference, and interactive demo integration.",
+            "独立完成通信约束建模、仿真与专家数据生成、Grid/Graph baseline、IL/RL/GNN 模型开发、鲁棒评估、NumPy 推理和交互式 Demo 集成。",
+            "獨立完成通訊約束建模、模擬與專家資料生成、Grid/Graph baseline、IL/RL/GNN 模型開發、穩健評估、NumPy 推理與互動式 Demo 整合。"
+          ),
         ],
         outcomes: [
-          { en: "0.9290 audit robust score", zhHans: "0.9290 audit robust score", zhHant: "0.9290 audit robust score" },
-          { en: "93.75% budget-3 success rate", zhHans: "93.75% budget-3 success", zhHant: "93.75% budget-3 success" },
-          { en: "0.244 ms p95 deploy latency", zhHans: "0.244 ms p95 deploy latency", zhHant: "0.244 ms p95 deploy latency" },
+          text("600 balanced Hard+ expert trajectories", "600 条平衡 Hard+ 专家轨迹", "600 條平衡 Hard+ 專家軌跡"),
+          text("93.75% success with a three-decision budget", "最多三次决策成功率 93.75%", "最多三次決策成功率 93.75%"),
+          text("96.67% success on 12–16-base-station graphs", "12–16 基站图成功率 96.67%", "12–16 基地台圖成功率 96.67%"),
+          text("0.244 ms p95 NumPy inference latency", "0.244 ms NumPy 推理 p95 延迟", "0.244 ms NumPy 推理 p95 延遲"),
         ],
         tech: {
-          en: "PyTorch, imitation learning, graph-level reinforcement learning, feasibility mask, SmartShield, Python, NumPy, NetworkX, CVXPY, Matplotlib, Jupyter Notebook, JSON/CSV metrics, HTML/JavaScript demo",
-          zhHans: "PyTorch、模仿学习、图级强化学习、可行性掩码、SmartShield、Python、NumPy、NetworkX、CVXPY、Matplotlib、Jupyter Notebook、JSON/CSV 指标、HTML/JavaScript 演示",
-          zhHant: "PyTorch、模仿學習、圖級強化學習、可行性遮罩、SmartShield、Python、NumPy、NetworkX、CVXPY、Matplotlib、Jupyter Notebook、JSON/CSV 指標、HTML/JavaScript 展示",
+          en: "PyTorch, Behavior Cloning, Dueling DDQN, GNN, Weighted Dijkstra, NetworkX, CVXPY, NumPy inference, robust evaluation, HTML/JavaScript demo",
+          zhHans: "PyTorch、行为克隆、Dueling DDQN、GNN、Weighted Dijkstra、NetworkX、CVXPY、NumPy 推理、鲁棒评估、HTML/JavaScript Demo",
+          zhHant: "PyTorch、行為克隆、Dueling DDQN、GNN、Weighted Dijkstra、NetworkX、CVXPY、NumPy 推理、穩健評估、HTML/JavaScript Demo",
         },
+        links: [
+          { label: text("GitHub Repository", "Github仓库", "Github倉庫"), url: "http://portal.heyi-direct.site/" },
+        ],
         sections: [
-          { id: "overview", title: DETAIL_TITLES.overview, paragraphs: [text("A communication-aware UAV path-planning system that brings route efficiency, cellular connectivity, handover cost, and safety constraints into one planning workflow.", "本项目将路径效率、通信连接质量、切换成本和安全约束纳入统一规划流程。", "本專案將路徑效率、通訊連線品質、切換成本與安全約束納入統一規劃流程。") ] },
-          { id: "problem", title: DETAIL_TITLES.problem, paragraphs: [text("Traditional shortest-path algorithms optimise distance or flight cost alone, so generated routes may cross weak cellular coverage and disrupt telemetry, control, or data return.", "传统最短路径算法只考虑距离或飞行成本，生成的路径可能穿过蜂窝信号较弱区域，影响无人机遥测、控制和数据回传。", "傳統最短路徑演算法只考慮距離或飛行成本，生成的路徑可能穿過蜂巢訊號較弱區域，影響無人機遙測、控制與資料回傳。") ] },
-          { id: "role", title: DETAIL_TITLES.role, paragraphs: [text("Built the Python simulation and reproducible training, validation, and test pipeline, then compared planning and learning approaches end to end.", "搭建 Python 仿真环境和可复现的训练、验证与测试流程，并端到端比较规划与学习方法。", "搭建 Python 模擬環境與可重現的訓練、驗證及測試流程，並端到端比較規劃與學習方法。") ], items: [text("100 simulated 10 km × 10 km maps", "100 个 10 km × 10 km 模拟地图", "100 個 10 km × 10 km 模擬地圖"), text("10 ground base stations per map", "每张地图 10 个地面基站", "每張地圖 10 個地面基地台"), text("600 hard-case expert trajectories", "600 条高难度专家轨迹", "600 條高難度專家軌跡") ] },
-          { id: "engineering", title: DETAIL_TITLES.engineering, paragraphs: [text("Compared grid and graph baselines, imitation learning, and graph-level reinforcement learning. The RL design moved from low-level heading control to higher-level base-station handover decisions, reducing action-space complexity and improving interpretability.", "项目比较了 grid baseline、graph baseline、模仿学习和图级强化学习。强化学习设计随后从低层飞行方向控制调整为更高层的基站切换决策，降低动作空间复杂度并提高决策可解释性。", "專案比較了 grid baseline、graph baseline、模仿學習與圖級強化學習。強化學習設計其後從低層飛行方向控制調整為更高層的基地台切換決策，降低動作空間複雜度並提高決策可解釋性。"), text("Added a feasibility mask, SmartShield, and fallback logic to reject clearly infeasible actions and revert to deterministic planning when policy output was risky.", "加入 feasibility mask、SmartShield 和 fallback 逻辑，用于阻止明显不可行的动作，并在策略输出风险较高时回退到确定性规划方案。", "加入 feasibility mask、SmartShield 與 fallback 邏輯，用於阻止明顯不可行的動作，並在策略輸出風險較高時回退至確定性規劃方案。") ] },
-          { id: "evidence", title: DETAIL_TITLES.evidence, paragraphs: [text("Built benchmark scripts for success rate, audit robustness, radio replay, and inference latency, plus a local HTML/JavaScript comparison demo.", "建立用于 success rate、audit robustness、radio replay 和推理延迟的 benchmark 脚本，并开发本地 HTML/JavaScript 演示页面用于对比不同算法生成的路线。", "建立用於 success rate、audit robustness、radio replay 與推理延遲的 benchmark 腳本，並開發本地 HTML/JavaScript 展示頁面以比較不同演算法生成的路線。") ], metrics: [text("0.9290 audit robust score", "0.9290 audit robust score", "0.9290 audit robust score"), text("93.75% budget-3 success rate", "93.75% budget-3 success rate", "93.75% budget-3 success rate"), text("0.244 ms p95 deployment latency", "0.244 ms p95 deployment latency", "0.244 ms p95 deployment latency") ] },
-          { id: "stack", title: DETAIL_TITLES.stack, paragraphs: [text("PyTorch · Imitation Learning · Graph-level Reinforcement Learning · Feasibility Mask · SmartShield · Python · NumPy · NetworkX · CVXPY · Matplotlib · Jupyter Notebook · HTML/JavaScript", "PyTorch · 模仿学习 · 图级强化学习 · 可行性掩码 · SmartShield · Python · NumPy · NetworkX · CVXPY · Matplotlib · Jupyter Notebook · HTML/JavaScript", "PyTorch · 模仿學習 · 圖級強化學習 · 可行性遮罩 · SmartShield · Python · NumPy · NetworkX · CVXPY · Matplotlib · Jupyter Notebook · HTML/JavaScript") ] },
+          {
+            id: "overview",
+            title: text("Project at a glance", "项目概览", "專案概覽"),
+            variant: "hero",
+            paragraphs: [
+              text(
+                "Plan both the flight path and handover sequence while keeping every point of the UAV trajectory inside cellular coverage. The system compares classical planning, imitation learning, graph reinforcement learning, and variable-size GNN policies under one reproducible evaluation pipeline.",
+                "在保证 UAV 轨迹全程处于蜂窝网络覆盖范围内的前提下，联合规划飞行路径与基站切换序列，并在同一套可复现评估流程中比较经典规划、模仿学习、图强化学习和可变规模 GNN。",
+                "在確保 UAV 軌跡全程位於蜂巢網路覆蓋範圍內的前提下，聯合規劃飛行路徑與基地台切換序列，並在同一套可重現評估流程中比較經典規劃、模仿學習、圖強化學習與可變規模 GNN。"
+              ),
+            ],
+          },
+          {
+            id: "problem",
+            title: text("Problem: why the shortest route can fail", "问题：为什么最短路径会失败", "問題：為何最短路徑會失敗"),
+            variant: "standard",
+            paragraphs: [
+              text(
+                "A start and destination can each have cellular signal while the straight line between them still crosses an uncovered region. Every sampled point on the trajectory must be covered by at least one ground base station, so distance alone is not a valid objective.",
+                "起点和终点分别有信号，并不意味着连接它们的直线全程有信号。轨迹上的每一个采样位置都必须由至少一个地面基站覆盖，因此系统不能只优化飞行距离。",
+                "起點與終點分別有訊號，並不代表連接它們的直線全程有訊號。軌跡上的每一個採樣位置都必須由至少一個地面基地台覆蓋，因此系統不能只最佳化飛行距離。"
+              ),
+            ],
+          },
+          {
+            id: "handover",
+            title: text("Core abstraction: Handover Graph", "核心技术抽象：Handover Graph", "核心技術抽象：Handover Graph"),
+            variant: "cards",
+            groups: [
+              { id: "graph", title: text("Coverage becomes a graph", "覆盖关系转为图", "覆蓋關係轉為圖"), items: [text("Ground base stations are nodes; stable overlap regions form legal handover edges.", "地面基站作为节点，稳定覆盖重叠区域构成合法切换边。", "地面基地台作為節點，穩定覆蓋重疊區域構成合法切換邊。")] },
+              { id: "sequence", title: text("Weighted Dijkstra", "Weighted Dijkstra", "Weighted Dijkstra"), items: [text("Selects an interpretable, communication-feasible base-station sequence.", "选择可解释且满足通信约束的基站序列。", "選擇可解釋且滿足通訊約束的基地台序列。")] },
+              { id: "continuous", title: text("CVXPY refinement", "CVXPY 连续优化", "CVXPY 連續最佳化"), items: [text("Optimises continuous handover points after the discrete sequence is fixed.", "在离散基站序列确定后优化连续切换点。", "在離散基地台序列確定後最佳化連續切換點。")] },
+              { id: "verify", title: text("Dense feasibility replay", "稠密可行性复核", "稠密可行性複核"), items: [text("Re-samples the final trajectory to verify continuous cellular coverage.", "对最终轨迹稠密采样，复核全程蜂窝覆盖。", "對最終軌跡稠密採樣，複核全程蜂巢覆蓋。")] },
+            ],
+          },
+          {
+            id: "architecture",
+            title: text("End-to-end system architecture", "端到端系统架构", "端到端系統架構"),
+            variant: "process",
+            groups: [
+              { id: "coverage", title: text("Coverage model", "通信覆盖建模", "通訊覆蓋建模"), items: [text("Map geometry and coverage constraints", "地图几何与覆盖约束", "地圖幾何與覆蓋約束")] },
+              { id: "graph", title: text("Handover Graph", "Handover Graph", "Handover Graph"), items: [text("Nodes, overlap edges, legal actions", "节点、重叠边、合法动作", "節點、重疊邊、合法動作")] },
+              { id: "expert", title: text("Expert planner", "专家规划器", "專家規劃器"), items: [text("Dijkstra + CVXPY", "Dijkstra + CVXPY", "Dijkstra + CVXPY")] },
+              { id: "dataset", title: text("Hard+ data", "Hard+ 数据", "Hard+ 資料"), items: [text("Balanced expert trajectories", "平衡专家轨迹", "平衡專家軌跡")] },
+              { id: "learning", title: text("Graph BC + DDQN", "Graph BC + DDQN", "Graph BC + DDQN"), items: [text("Learned handover decisions", "学习基站切换决策", "學習基地台切換決策")] },
+              { id: "gnn", title: text("Variable-size GNN", "可变规模 GNN", "可變規模 GNN"), items: [text("Direct 12–16-node graphs", "直接处理 12–16 节点图", "直接處理 12–16 節點圖")] },
+              { id: "safety", title: text("Safety layer", "可靠性保护", "可靠性保護"), items: [text("Mask, loop checks, fallback", "Mask、循环检测、回退", "Mask、循環檢測、回退")] },
+              { id: "benchmark", title: text("Audit + deployment", "审计与部署", "稽核與部署"), items: [text("Radio replay and latency", "Radio replay 与延迟", "Radio replay 與延遲")] },
+            ],
+          },
+          {
+            id: "redesign",
+            title: text("Key technical redesign", "最关键的技术重构", "最關鍵的技術重構"),
+            variant: "comparison",
+            callout: text("16 local headings → next target GBS", "16 个局部航向 → 下一座目标基站", "16 個局部航向 → 下一座目標基地台"),
+            groups: [
+              {
+                id: "low-level",
+                title: text("Original: low-level heading control", "原始方案：低层方向控制", "原始方案：低層方向控制"),
+                items: [
+                  text("36D structured state → 16 heading actions", "36D 结构化状态 → 16 个飞行方向", "36D 結構化狀態 → 16 個飛行方向"),
+                  text("One decision every 10 m; hundreds to 1,500 steps", "每 10 米决策一次；数百至 1500 步", "每 10 米決策一次；數百至 1500 步"),
+                  text("Imitation learning: 43.8% success, 0% communication violations", "模仿学习：43.8% 成功，0% 通信违规", "模仿學習：43.8% 成功，0% 通訊違規"),
+                  text("Low-level DDQN: 0% test success; loops and timeouts dominated", "低层 DDQN：测试成功率 0%；主要失败为循环和超时", "低層 DDQN：測試成功率 0%；主要失敗為循環與逾時"),
+                ],
+              },
+              {
+                id: "graph-level",
+                title: text("Redesign: graph-level handover", "重构方案：图级基站切换", "重構方案：圖級基地台切換"),
+                items: [
+                  text("Graph state → next target base station", "图状态 → 下一座目标基站", "圖狀態 → 下一座目標基地台"),
+                  text("Typically 2–4 handover decisions per task", "每个任务通常仅需 2–4 次切换决策", "每個任務通常僅需 2–4 次切換決策"),
+                  text("Shorter planning horizon with explicit communication meaning", "显著缩短规划时程，动作具有明确通信含义", "顯著縮短規劃時程，動作具有明確通訊含義"),
+                  text("Supports legal-action masks and deterministic recovery", "支持合法动作 mask 与确定性恢复", "支援合法動作 mask 與確定性恢復"),
+                ],
+              },
+            ],
+          },
+          {
+            id: "data-models",
+            title: text("Data and learning pipeline", "数据与学习管线", "資料與學習管線"),
+            variant: "cards",
+            groups: [
+              { id: "dataset", title: text("Hard+ expert dataset", "Hard+ 专家数据", "Hard+ 專家資料"), items: [text("100 maps, 10 base stations per map, 600 trajectories balanced across Short / Medium / Long buckets.", "100 张地图、每张 10 个基站、600 条专家轨迹，并按 Short / Medium / Long 平衡分桶。", "100 張地圖、每張 10 個基地台、600 條專家軌跡，並按 Short / Medium / Long 平衡分桶。")] },
+              { id: "split", title: text("Leakage-resistant evaluation", "防泄漏评估", "防洩漏評估"), items: [text("Training, validation, and test sets are isolated at map level.", "训练、验证和测试按地图隔离。", "訓練、驗證與測試按地圖隔離。")] },
+              { id: "models", title: text("Graph BC + Dueling DDQN", "Graph BC + Dueling DDQN", "Graph BC + Dueling DDQN"), items: [text("Behavior cloning provides a stable initial policy before graph-level reinforcement learning.", "行为克隆提供稳定初始策略，再进行图级强化学习。", "行為克隆提供穩定初始策略，再進行圖級強化學習。")] },
+              { id: "variable", title: text("Variable-size GNN", "可变规模 GNN", "可變規模 GNN"), items: [text("Extends the fixed 10-node state to direct inference on 12–16-base-station graphs without node pruning.", "从固定 10 节点状态扩展到直接处理 12–16 基站图，节点裁剪率为 0%。", "從固定 10 節點狀態擴展到直接處理 12–16 基地台圖，節點裁剪率為 0%。")] },
+            ],
+          },
+          {
+            id: "results",
+            title: text("Results and evidence", "结果与证据", "結果與證據"),
+            variant: "metrics",
+            paragraphs: [
+              text(
+                "Each result is tied to a named evaluation condition rather than presented as an unconditional headline. The learned policy is evaluated for decision compression, graph-size generalisation, robustness, and deployment latency.",
+                "每个结果都绑定明确测试条件，而不是脱离上下文展示数字。学习策略重点验证决策压缩、图规模泛化、鲁棒性和部署延迟。",
+                "每個結果都綁定明確測試條件，而不是脫離上下文展示數字。學習策略重點驗證決策壓縮、圖規模泛化、穩健性與部署延遲。"
+              ),
+            ],
+            projectMetrics: [
+              metric(
+                "robust-score",
+                "0.929",
+                text("Robust audit score", "鲁棒审计分数", "穩健稽核分數"),
+                text("Secondary evidence across structured perturbations", "覆盖结构化扰动的次级证据", "涵蓋結構化擾動的次級證據"),
+                text("Aggregates edge deletion, node failure, coverage shrinkage, and decision-budget perturbations.", "综合边删除、节点故障、覆盖收缩和决策预算扰动。", "綜合邊刪除、節點故障、覆蓋收縮與決策預算擾動。")
+              ),
+            ],
+          },
+          {
+            id: "reliability",
+            title: text("Engineering reliability", "工程可靠性", "工程可靠性"),
+            variant: "cards",
+            groups: [
+              { id: "mask", title: text("Legal-action mask", "合法动作约束", "合法動作約束"), items: [text("Only adjacent base stations with a valid handover edge can be selected.", "仅允许选择存在合法切换边的相邻基站。", "僅允許選擇存在合法切換邊的相鄰基地台。")] },
+              { id: "loop", title: text("Loop and stall detection", "循环与停滞检测", "循環與停滯檢測"), items: [text("Detects repeated visits, two-cycles, lack of progress, and exhausted decision budgets.", "识别重复访问、二周期循环、无进展和决策预算耗尽。", "識別重複造訪、二週期循環、無進展與決策預算耗盡。")] },
+              { id: "fallback", title: text("Deterministic recovery", "确定性回退", "確定性回退"), items: [text("Runs shortest-suffix search from the current node, then invokes the global classical planner if necessary.", "从当前节点执行最短后缀搜索，必要时调用全局经典规划器。", "從目前節點執行最短後綴搜尋，必要時呼叫全域經典規劃器。")] },
+              { id: "repro", title: text("Reproducible audit", "可复现评估", "可重現評估"), items: [text("Uses fixed map splits, perturbation scenarios, short decision budgets, radio replay, and p95 latency benchmarks.", "使用固定地图拆分、扰动场景、短预算、radio replay 和 p95 延迟 benchmark。", "使用固定地圖拆分、擾動場景、短預算、radio replay 與 p95 延遲 benchmark。")] },
+            ],
+          },
+          {
+            id: "stack",
+            title: text("Technology stack", "技术栈", "技術棧"),
+            variant: "stack",
+            groups: [
+              { id: "ml", title: text("Machine Learning", "Machine Learning", "Machine Learning"), items: [text("PyTorch", "PyTorch", "PyTorch"), text("Behavior Cloning", "Behavior Cloning", "Behavior Cloning"), text("Dueling DDQN", "Dueling DDQN", "Dueling DDQN"), text("GNN", "GNN", "GNN")] },
+              { id: "planning", title: text("Planning & Optimization", "规划与优化", "規劃與最佳化"), items: [text("Weighted Dijkstra", "Weighted Dijkstra", "Weighted Dijkstra"), text("NetworkX", "NetworkX", "NetworkX"), text("CVXPY", "CVXPY", "CVXPY")] },
+              { id: "evaluation", title: text("Data & Evaluation", "数据与评估", "資料與評估"), items: [text("NumPy", "NumPy", "NumPy"), text("Matplotlib", "Matplotlib", "Matplotlib"), text("Jupyter", "Jupyter", "Jupyter"), text("JSON / CSV", "JSON / CSV", "JSON / CSV")] },
+              { id: "deployment", title: text("Deployment & Demo", "部署与 Demo", "部署與 Demo"), items: [text("NumPy inference", "NumPy 推理", "NumPy 推理"), text("Python HTTP server", "Python HTTP Server", "Python HTTP Server"), text("HTML / JavaScript", "HTML / JavaScript", "HTML / JavaScript")] },
+            ],
+          },
+          {
+            id: "boundaries",
+            title: text("Limitations and technical boundaries", "局限和技术边界", "限制與技術邊界"),
+            variant: "cards",
+            groups: [
+              { id: "simulation", title: text("Evaluation scope", "评估范围", "評估範圍"), items: [text("The reported metrics come from simulated maps, held-out map splits, and named perturbation tests; they are not claims of production flight certification.", "指标来自模拟地图、隔离地图测试集和明确扰动测试，不代表真实生产飞行认证。", "指標來自模擬地圖、隔離地圖測試集與明確擾動測試，不代表真實生產飛行認證。")] },
+              { id: "hybrid", title: text("Hybrid-system claim", "混合系统定位", "混合系統定位"), items: [text("Learning compresses and generalises expert decisions; the classical planner remains the expert reference and deterministic recovery path.", "学习策略用于压缩和泛化专家决策；经典规划器仍是专家参考和确定性恢复路径。", "學習策略用於壓縮與泛化專家決策；經典規劃器仍是專家參考與確定性恢復路徑。")] },
+            ],
+          },
         ],
       },
-      skills: ["python", "pytorch", "numpy", "networkx", "cvxpy", "matplotlib", "jupyter", "imitation", "rl", "graph-policy"],
+      featuredProject: {
+        category: text("AI · Reinforcement Learning · Path Planning", "AI · 强化学习 · 路径规划", "AI · 強化學習 · 路徑規劃"),
+        ownership: text(
+          "Independently completed problem formulation, data generation, baselines, IL/RL/GNN development, evaluation, deployment profiling, and demo integration.",
+          "独立完成问题建模、数据生成、baseline、IL/RL/GNN 开发、实验评估、部署 profiling 和 Demo 集成。",
+          "獨立完成問題建模、資料生成、baseline、IL/RL/GNN 開發、實驗評估、部署 profiling 與 Demo 整合。"
+        ),
+        cardMetrics: [
+          metric("expert-trajectories", "600", text("Hard+ expert trajectories", "Hard+ 专家轨迹", "Hard+ 專家軌跡"), text("100 maps · balanced difficulty buckets", "100 张地图 · 三种难度平衡", "100 張地圖 · 三種難度平衡")),
+          metric("budget-3", "93.75%", text("Three-decision success", "最多三次决策成功率", "最多三次決策成功率"), text("At most three handover decisions", "最多 3 次基站切换决策", "最多 3 次基地台切換決策"), text("Measures completion under a strict budget of no more than three graph-level handover decisions.", "衡量最多仅允许三次图级基站切换决策时的任务完成率。", "衡量最多僅允許三次圖級基地台切換決策時的任務完成率。")),
+          metric("p95-latency", "0.244 ms", text("p95 inference latency", "p95 推理延迟", "p95 推理延遲"), text("NumPy graph-policy deployment", "NumPy 图策略部署", "NumPy 圖策略部署")),
+        ],
+        detailMetrics: [
+          metric("expert-trajectories", "600", text("Hard+ expert trajectories", "Hard+ 专家轨迹", "Hard+ 專家軌跡"), text("100 maps · Short / Medium / Long balanced", "100 张地图 · Short / Medium / Long 平衡", "100 張地圖 · Short / Medium / Long 平衡")),
+          metric("budget-3", "93.75%", text("Three-decision success", "三次决策预算成功率", "三次決策預算成功率"), text("At most three graph-level handovers", "最多三次图级基站切换", "最多三次圖級基地台切換"), text("Measures completion under a strict budget of no more than three graph-level handover decisions.", "衡量最多仅允许三次图级基站切换决策时的任务完成率。", "衡量最多僅允許三次圖級基地台切換決策時的任務完成率。")),
+          metric("high-bs", "96.67%", text("Variable-size graph success", "可变规模图成功率", "可變規模圖成功率"), text("12–16 base stations · 0% node pruning", "12–16 个基站 · 0% 节点裁剪", "12–16 個基地台 · 0% 節點裁剪"), text("Evaluated on larger 12–16-base-station graphs processed directly by the variable-size GNN.", "在可变规模 GNN 直接处理的 12–16 基站图上评估。", "在可變規模 GNN 直接處理的 12–16 基地台圖上評估。")),
+          metric("p95-latency", "0.244 ms", text("p95 inference latency", "p95 推理延迟", "p95 推理延遲"), text("Lightweight NumPy inference engine", "轻量 NumPy 推理引擎", "輕量 NumPy 推理引擎"), text("p95 latency from the deployment benchmark, using NumPy inference to reduce small-model framework overhead.", "部署 benchmark 的 p95 延迟，通过 NumPy 推理减少小模型框架开销。", "部署 benchmark 的 p95 延遲，透過 NumPy 推理減少小模型框架開銷。")),
+        ],
+        featuredSkillIds: ["pytorch", "graph-policy", "gnn", "dijkstra", "cvxpy"],
+      },
+      skills: ["python", "pytorch", "numpy", "networkx", "dijkstra", "cvxpy", "matplotlib", "jupyter", "imitation", "rl", "graph-policy", "gnn"],
       trackIds: ["ai-vision"],
       position: { x: 520, y: CANVAS_LANE_Y.project },
-      size: { ...CANVAS_PRIMARY_CARD_SIZE },
+      size: { ...CANVAS_FEATURED_CARD_SIZE },
       emphasis: "primary",
     },
     {
@@ -919,7 +1073,7 @@ export const defaultPortfolio: Portfolio = {
       },
       skills: ["python", "pytorch", "yolov5", "cv", "roboflow", "uart", "pyserial", "jetson", "robot-vision", "control-logic", "embedded-systems"],
       trackIds: ["ai-vision", "iot-device"],
-      position: { x: 1040, y: CANVAS_LANE_Y.project + 38 },
+      position: { x: 1160, y: CANVAS_LANE_Y.project + 38 },
       size: { ...CANVAS_DENSE_CARD_SIZE },
     },
     {
@@ -979,8 +1133,8 @@ export const defaultPortfolio: Portfolio = {
           zhHant: "Vue 3、TypeScript、Vite、Vue Router、ECharts、Python、FastAPI、SQLAlchemy、SQLite、APScheduler、REST APIs、GitHub Actions",
         },
         links: [
-          { label: { en: "GitHub Page", zhHans: "GitHub Page", zhHant: "GitHub Page" }, url: "https://hey1www.github.io/SushiroQueuePrediction/#/" },
-          { label: { en: "Repository", zhHans: "前端仓库", zhHant: "前端倉庫" }, url: "https://github.com/hey1www/SushiroQueuePrediction" },
+          { label: text("Live Site", "在线页面", "線上頁面"), url: "https://hey1www.github.io/SushiroQueuePrediction/#/" },
+          { label: text("GitHub Repository", "Github仓库", "Github倉庫"), url: "https://github.com/hey1www/SushiroQueuePrediction" },
         ],
         sections: [
           { id: "overview", title: DETAIL_TITLES.overview, paragraphs: [text("A full-stack data system for comparing live Sushiro Hong Kong queue conditions, historical trends, rule-based waiting-time estimates, and alternative stores.", "面向香港寿司郎门店的全栈数据系统，用于比较实时排队状态、历史趋势、规则化等待时间估算和候选门店。", "面向香港壽司郎門市的全端資料系統，用於比較即時排隊狀態、歷史趨勢、規則化等候時間估算與候選門市。") ] },
@@ -988,15 +1142,12 @@ export const defaultPortfolio: Portfolio = {
           { id: "role", title: DETAIL_TITLES.role, items: [text("Built the Vue 3 and TypeScript frontend with overview, store detail, analytics, filtering, sorting, auto-refresh, and responsive navigation.", "开发 Vue 3 与 TypeScript 前端，实现门店总览、详情、趋势分析、筛选排序、自动刷新和响应式导航。", "開發 Vue 3 與 TypeScript 前端，實作門市總覽、詳情、趨勢分析、篩選排序、自動刷新與響應式導覽。"), text("Built the FastAPI, SQLAlchemy, and SQLite backend and normalised public queue payloads.", "开发 FastAPI、SQLAlchemy 与 SQLite 后端，并规范化公开排队数据。", "開發 FastAPI、SQLAlchemy 與 SQLite 後端，並規範化公開排隊資料。") ] },
           { id: "engineering", title: DETAIL_TITLES.engineering, paragraphs: [text("APScheduler refreshes data and stores timestamped queue snapshots. The rule-based ETA combines current waiting groups, recent queue progression, historical time-slot characteristics, and upstream wait values, preserving the product's position as a data system rather than a machine-learning predictor.", "通过 APScheduler 定期刷新数据并保存带时间戳的队列快照。规则化 ETA 将当前等待组数、近期队列推进速度、历史时段特征和上游等待值组合起来，保持项目作为数据系统而非机器学习预测器的准确定位。", "透過 APScheduler 定期刷新資料並保存帶時間戳的隊列快照。規則化 ETA 將目前等候組數、近期佇列推進速度、歷史時段特徵與上游等候值組合起來，保持專案作為資料系統而非機器學習預測器的準確定位。") ] },
           { id: "evidence", title: DETAIL_TITLES.evidence, items: [text("Persistent historical queue snapshots across stores and time slots.", "持续记录不同门店和时段的历史队列快照。", "持續記錄不同門市與時段的歷史佇列快照。"), text("Live overview, store detail, trend analysis, filters, sorting, and recommendations.", "交付实时总览、门店详情、趋势分析、筛选排序和门店推荐。", "交付即時總覽、門市詳情、趨勢分析、篩選排序與門市推薦。") ] },
-          { id: "stack", title: DETAIL_TITLES.stack, paragraphs: [text("Vue 3 · TypeScript · Vite · Vue Router · ECharts · Python · FastAPI · SQLAlchemy · SQLite · APScheduler · REST API", "Vue 3 · TypeScript · Vite · Vue Router · ECharts · Python · FastAPI · SQLAlchemy · SQLite · APScheduler · REST API", "Vue 3 · TypeScript · Vite · Vue Router · ECharts · Python · FastAPI · SQLAlchemy · SQLite · APScheduler · REST API") ], links: [
-            { label: text("Live Site", "在线页面", "線上頁面"), url: "https://hey1www.github.io/SushiroQueuePrediction/#/" },
-            { label: text("Repository", "前端仓库", "前端倉庫"), url: "https://github.com/hey1www/SushiroQueuePrediction" },
-          ] },
+          { id: "stack", title: DETAIL_TITLES.stack, paragraphs: [text("Vue 3 · TypeScript · Vite · Vue Router · ECharts · Python · FastAPI · SQLAlchemy · SQLite · APScheduler · REST API", "Vue 3 · TypeScript · Vite · Vue Router · ECharts · Python · FastAPI · SQLAlchemy · SQLite · APScheduler · REST API", "Vue 3 · TypeScript · Vite · Vue Router · ECharts · Python · FastAPI · SQLAlchemy · SQLite · APScheduler · REST API") ] },
         ],
       },
       skills: ["vue", "typescript", "vite", "echarts", "python", "fastapi", "sqlalchemy", "sqlite", "apscheduler", "github-actions", "rest-api", "data-pipeline"],
       trackIds: ["software-data"],
-      position: { x: 1560, y: CANVAS_LANE_Y.project + 14 },
+      position: { x: 1680, y: CANVAS_LANE_Y.project + 14 },
       size: { ...CANVAS_DENSE_CARD_SIZE },
     },
     {
@@ -1063,7 +1214,7 @@ export const defaultPortfolio: Portfolio = {
       },
       skills: ["esp8266", "arduino-c", "mqtt", "json-iot", "django", "sqlite", "led-mat", "rgb-led", "embedded-systems"],
       trackIds: ["iot-device"],
-      position: { x: 2080, y: CANVAS_LANE_Y.project + 45 },
+      position: { x: 2200, y: CANVAS_LANE_Y.project + 45 },
       size: { ...CANVAS_DENSE_CARD_SIZE },
     },
     {
@@ -1112,7 +1263,7 @@ export const defaultPortfolio: Portfolio = {
       },
       skills: ["swift", "swiftui", "mvvm", "xcode"],
       trackIds: ["software-data"],
-      position: { x: 2600, y: CANVAS_LANE_Y.project + 22 },
+      position: { x: 2720, y: CANVAS_LANE_Y.project + 22 },
       size: { ...CANVAS_COMPACT_CARD_SIZE },
       emphasis: "secondary",
     },

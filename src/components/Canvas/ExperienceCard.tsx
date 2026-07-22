@@ -22,7 +22,7 @@ type Props = {
 };
 
 const EXPAND_LABEL: LocaleText = {
-  en: "Expand Details",
+  en: "View Details",
   zhHans: "查看详情",
   zhHant: "查看詳情",
 };
@@ -56,9 +56,17 @@ export function ExperienceCard({
   } | null>(null);
   const suppressClickRef = useRef(false);
   const cardRef = useRef<HTMLElement | null>(null);
-  const skills = card.skills
+  const featured = card.featuredProject;
+  const primarySkillIds = featured?.featuredSkillIds ?? card.skills;
+  const primarySkills = primarySkillIds
     .map((id) => portfolio.skills.find((s) => s.id === id))
     .filter((s): s is NonNullable<typeof s> => Boolean(s));
+  const secondarySkills = featured
+    ? card.skills
+        .filter((id) => !featured.featuredSkillIds.includes(id))
+        .map((id) => portfolio.skills.find((s) => s.id === id))
+        .filter((s): s is NonNullable<typeof s> => Boolean(s))
+    : [];
   const tracks = card.trackIds
     .map((id) => portfolio.skillTracks.find((track) => track.id === id))
     .filter((track): track is NonNullable<typeof track> => Boolean(track));
@@ -69,7 +77,7 @@ export function ExperienceCard({
   const roleText = t(card.role);
   const isProfile = card.group === "profile";
   const displayTitleText = isProfile && locale === "en" ? subtitleText || titleText : titleText;
-  const showSubtitle = Boolean(card.subtitle) && (!isProfile || locale !== "en");
+  const showSubtitle = !featured && Boolean(card.subtitle) && (!isProfile || locale !== "en");
   const summaryText = visibleSummary(t(card.summary), titleText, subtitleText, roleText);
   const emphasisRing =
     emphasis === "primary"
@@ -80,7 +88,7 @@ export function ExperienceCard({
 
   // FYP card (project + primary) is the graduation project; surface a
   // localised label instead of a generic emphasis tag.
-  const isFyp = card.group === "project" && emphasis === "primary";
+  const isFyp = card.group === "project" && Boolean(featured);
   const badgeLabel: LocaleText | null = isFyp
     ? { en: "Final Year Project", zhHans: "毕业设计", zhHant: "畢業設計" }
     : null;
@@ -90,6 +98,7 @@ export function ExperienceCard({
     top: card.position.y,
     width: card.size.width,
     height: editable ? card.size.height : undefined,
+    minHeight: !editable && featured ? card.size.height : undefined,
     borderColor: isActive || isHighlighted ? "#1E3A5F" : undefined,
   } satisfies CSSProperties;
 
@@ -220,6 +229,11 @@ export function ExperienceCard({
           {subtitleText}
         </p>
       )}
+      {featured && (
+        <p className="mt-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-navy">
+          {t(featured.category)}
+        </p>
+      )}
       {card.role && (
         <p className={classNames(
           "mt-1 text-navy",
@@ -247,7 +261,24 @@ export function ExperienceCard({
         </p>
       )}
 
-      {tracks.length > 0 && (
+      {featured && (
+        <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-md border border-border-soft bg-slate-50/80">
+          {featured.cardMetrics.map((metric, index) => (
+            <div
+              key={metric.id}
+              className={classNames(
+                "min-w-0 px-2.5 py-2.5",
+                index > 0 && "border-l border-border-soft"
+              )}
+            >
+              <p className="font-title text-[20px] font-bold leading-none text-navy">{t(metric.value)}</p>
+              <p className="mt-1 text-[10px] font-semibold leading-tight text-text-main/80">{t(metric.label)}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!featured && tracks.length > 0 && (
         <div className="mt-2 flex flex-none flex-wrap gap-1">
           {tracks.map((track) => {
             const active = activeFilter?.kind === "track" && activeFilter.id === track.id;
@@ -274,14 +305,51 @@ export function ExperienceCard({
         </div>
       )}
 
-      {skills.length > 0 && (
-        <div className="mt-2 flex flex-none flex-wrap gap-1">
-          {skills.map((s) => (
+      {primarySkills.length > 0 && (
+        <div data-skill-tier="primary" className="mt-2 flex flex-none flex-wrap gap-1">
+          {primarySkills.map((s) =>
+            featured ? (
+              <button
+                key={s.id}
+                type="button"
+                aria-pressed={activeFilter?.kind === "skill" && activeFilter.id === s.id}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onFilterClick({ kind: "skill", id: s.id });
+                }}
+                className={classNames(
+                  "rounded-full border px-2.5 py-1 font-mono text-[10px] font-semibold transition-colors",
+                  activeFilter?.kind === "skill" && activeFilter.id === s.id
+                    ? "border-navy bg-navy text-white"
+                    : "border-navy/20 bg-navy/5 text-navy hover:border-navy/50"
+                )}
+              >
+                {t(s.label)}
+              </button>
+            ) : (
+              <SkillTag
+                key={s.id}
+                skill={s}
+                active={activeFilter?.kind === "skill" && activeFilter.id === s.id}
+                onClick={() => onFilterClick({ kind: "skill", id: s.id })}
+              />
+            )
+          )}
+        </div>
+      )}
+
+      {secondarySkills.length > 0 && (
+        <div
+          data-skill-tier="secondary"
+          className="mt-1.5 flex flex-none flex-wrap gap-1"
+          aria-label={locale === "en" ? "Additional skills" : "其他技能"}
+        >
+          {secondarySkills.map((skill) => (
             <SkillTag
-              key={s.id}
-              skill={s}
-              active={activeFilter?.kind === "skill" && activeFilter.id === s.id}
-              onClick={() => onFilterClick({ kind: "skill", id: s.id })}
+              key={skill.id}
+              skill={skill}
+              active={activeFilter?.kind === "skill" && activeFilter.id === skill.id}
+              onClick={() => onFilterClick({ kind: "skill", id: skill.id })}
             />
           ))}
         </div>
